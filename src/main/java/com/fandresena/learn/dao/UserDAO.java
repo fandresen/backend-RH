@@ -4,14 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.fandresena.learn.entity.User;
 import com.fandresena.learn.model.UserModel;
 import com.fandresena.learn.repository.DepartementRepo;
+import com.fandresena.learn.repository.EntrepriseRepo;
 import com.fandresena.learn.repository.UserRepo;
 
+@Component
 public class UserDAO {
     @Autowired
     private UserRepo userRepository;
+
+    @Autowired
+    private DepartementRepo departementRepository;
+
+    @Autowired
+    private EntrepriseRepo entrepriseRepository;
 
     public void createUser(UserModel userModel){
         User user = userRepository.findById(userModel.getId()).orElse(null);
@@ -62,7 +72,7 @@ public class UserDAO {
         return userModels;
     }
 
-    public User updateUser(int id, User user){
+    public void updateUser(int id, UserModel user){
         User currentUser = userRepository.findById(id).orElse(null);
         if(currentUser != null){
             currentUser.setFirst_name(user.getFirst_name());
@@ -74,11 +84,32 @@ public class UserDAO {
             currentUser.setPicture(user.getPicture());
             currentUser.setPassword(user.getPassword());
             currentUser.setIn_Conger(user.getIsIn_Conger());
-            currentUser.setDepartement(user.getDepartement());
-            currentUser.setEntreprise(user.getEntreprise());
-            return userRepository.save(currentUser);
+            currentUser.setDepartement(departementRepository.findById(user.getDepartement_id()).orElse(null));
+            currentUser.setEntreprise(entrepriseRepository.findById(user.getEntreprise_id()).orElse(null));
+            userRepository.save(currentUser);
         }
-        return null;
+    }
+
+    public List<UserModel> getAllUserByDepartementId(int dep_id){
+        List<User> users = userRepository.getAllUsersByDepartementId(dep_id);
+        List<UserModel> userModels = new ArrayList<>();
+        for(int i=0;i<users.size();i++){
+            User user = users.get(i);
+            UserModel userModel = new UserModel();
+            userModel.setFirst_name(user.getFirst_name());
+            userModel.setLast_name(user.getLast_name());
+            userModel.setEmail(user.getEmail());
+            userModel.setPhone_number(user.getPhone_number());
+            userModel.setRole(user.getRole());
+            userModel.setAddress(user.getAddress());
+            userModel.setPicture(user.getPicture());
+            userModel.setPassword(user.getPassword());
+            userModel.setIn_Conger(user.getIsIn_Conger());
+            userModel.setDepartement_id(user.getDepartement().getId());
+            userModel.setEntreprise_id(user.getEntreprise().getId());
+            userModels.add(userModel);
+        }
+        return userModels;
     }
 
     public void deleteUser(int id){

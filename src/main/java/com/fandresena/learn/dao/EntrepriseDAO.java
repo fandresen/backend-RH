@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fandresena.learn.entity.Entreprise;
 import com.fandresena.learn.model.EntrepriseModel;
 import com.fandresena.learn.repository.EntrepriseRepo;
 import com.fandresena.learn.repository.LicenseRepo;
 
+@Component
 public class EntrepriseDAO {
     @Autowired
     private EntrepriseRepo entrepriseRepo;

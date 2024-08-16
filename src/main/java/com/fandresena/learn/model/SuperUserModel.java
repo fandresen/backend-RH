@@ -1,8 +1,5 @@
 package com.fandresena.learn.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 
 public class SuperUserModel {
  public SuperUserModel() {

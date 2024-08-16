@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fandresena.learn.entity.Superuser;
 import com.fandresena.learn.model.SuperUserModel;
 import com.fandresena.learn.repository.SuperUserRepo;
 
+@Component
 public class SuperUserDAO {
     @Autowired
     private SuperUserRepo superUserRepo;

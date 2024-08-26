@@ -24,8 +24,23 @@ public class UserDAO {
     private EntrepriseRepo entrepriseRepository;
 
     public void createUser(UserModel userModel){
-        User user = userRepository.findById(userModel.getId()).orElse(null);
-        userRepository.save(user);
+        User exist_user = userRepository.findById(userModel.getId()).orElse(null);
+        if(exist_user == null){
+            User user = new User();
+            user.setId(userModel.getId());
+            user.setFirst_name(userModel.getFirst_name());
+            user.setLast_name(userModel.getLast_name());
+            user.setEmail(userModel.getEmail());
+            user.setPhone_number(userModel.getPhone_number());
+            user.setRole(userModel.getRole());
+            user.setAddress(userModel.getAddress());
+            user.setPicture(userModel.getPicture());
+            user.setPassword(userModel.getPassword());
+            user.setIn_Conger(userModel.getIsIn_Conger());
+
+            userRepository.save(user);
+        }
+       
     }
 
     public UserModel getUserById(int id){

@@ -1,5 +1,7 @@
 package com.fandresena.learn.model;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 
 public class SuperUserModel {
  public SuperUserModel() {
@@ -7,7 +9,10 @@ public class SuperUserModel {
     }
     
     private int id;
+    @NotNull(message = "email cannot be null")
+    @Email(message = "should be a valid email address")
     private String email;
+    @NotNull(message = "password cannot be null")
     private String password;
     public int getId() {
         return id;

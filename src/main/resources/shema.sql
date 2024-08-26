@@ -1,7 +1,6 @@
 CREATE TABLE Entreprise (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
-    license_id INT NOT NULL,
     FOREIGN KEY (license_id) REFERENCES License(id)
 );
 

@@ -13,14 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fandresena.learn.model.SuperUserModel;
 import com.fandresena.learn.service.SuperUserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/superuser")
-public class SuperUserContorller {
+public class SuperUserController {
 
     private final SuperUserService superUserService;
 
     @Autowired
-    public SuperUserContorller(SuperUserService superUserService) {
+    public SuperUserController(SuperUserService superUserService) {
         this.superUserService = superUserService;
     }
 
@@ -31,7 +33,7 @@ public class SuperUserContorller {
     }
 
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<String> createSuperUser(@RequestBody SuperUserModel superUserModel){
+    public ResponseEntity<String> createSuperUser(@Valid @RequestBody SuperUserModel superUserModel){
         try {
             superUserService.createSuperUser(superUserModel);
             return ResponseEntity.ok("Created Successfully");

@@ -1,20 +1,22 @@
 package com.fandresena.learn.model;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+// import lombok.Getter;
+// import lombok.Setter;
 
+// @Getter
+// @Setter
 public class EntrepriseModel {
  public EntrepriseModel(){  
     }
 
     private int id;
+    @NotNull (message = "name cannot be null")
+    @Size(min = 3,message = "min 3 characters")
     private String name;
-    private int license_id;
 
-    public int getLicense_id() {
-        return license_id;
-    }
-    public void setLicense_id(int license_id) {
-        this.license_id = license_id;
-    }
+    
     public int getId() {
         return id;
     }
@@ -29,7 +31,7 @@ public class EntrepriseModel {
     }
     @Override
     public String toString() {
-        return "EntrepriseModel [id=" + id + ", name=" + name + ", license_id=" + license_id + "]";
+        return "EntrepriseModel [id=" + id + ", name=" + name + ", license_id=" + "]";
     }
 
 }

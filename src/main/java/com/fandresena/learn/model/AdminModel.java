@@ -1,15 +1,36 @@
 package com.fandresena.learn.model;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+// import lombok.Getter;
+// import lombok.Setter;
+
+// @Getter
+// @Setter
 public class AdminModel extends UserModel{
     private int id;
+    @NotNull(message = "first name cannot be null")
+    @Size(min = 3 , message = "min required 3 chracters")
     private String first_name;
+    @NotNull(message = "last name cannot be null")
+    @Size(min = 3, message = "min required 3 chracters")
     private String last_name;
+    @NotNull(message = "email cannot be null")
+    @Email(message = "should be a valid email address")
     private String email;
+    @NotNull(message = "phone number cannot be null")
+    @Size(min = 10,message = "phone number must be from 10")
     private String phone_number;
     private String role;
+    @NotNull(message = "adress cannot be null")
+    @Size(min = 5,message = "adress require 5 characters min")
     private String address;
     private String picture;
+    @NotNull(message = "passwprd cannot be null")
+    @Size(min = 10)
     private String password;
+    @NotNull(message = "in_conger cannot be null")
     private boolean in_Conger;
 
     public AdminModel(){

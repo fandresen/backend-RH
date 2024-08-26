@@ -1,21 +1,36 @@
 package com.fandresena.learn.model;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+
 public class UserModel {
   public UserModel() {
 
     }
 
     private int id;
+    @NotNull(message = "first name cannot be null")
     private String first_name;
+    @NotNull(message = "last name cannot be null")
     private String last_name;
+    @NotNull(message = "email cannot be null")
+    @Email(message = "shoud be a valid email address")
     private String email;
+    @NotNull(message = "phone number cannot be null")
     private String phone_number;
+    @NotNull(message = "role cannot be null")
     private String role;
+    @NotNull(message = "addresscannot be null")
     private String address;
     private String picture;
+    @NotNull(message = "passwordcannot be null")
     private String password;
+    @NotNull(message = "in_conger cannot be null")
     private boolean in_Conger;
+    @NotNull(message = "departement_id cannot be null")
     private int departement_id;
+    @NotNull(message = "entreprise_id cannot be null")
+
     private int entreprise_id;
     public int getId() {
         return id;

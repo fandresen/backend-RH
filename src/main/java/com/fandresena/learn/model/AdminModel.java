@@ -8,10 +8,10 @@ import jakarta.validation.constraints.Size;
 
 // @Getter
 // @Setter
-public class AdminModel extends UserModel{
+public class AdminModel extends UserModel {
     private int id;
     @NotNull(message = "first name cannot be null")
-    @Size(min = 3 , message = "min required 3 chracters")
+    @Size(min = 3, message = "min required 3 chracters")
     private String first_name;
     @NotNull(message = "last name cannot be null")
     @Size(min = 3, message = "min required 3 chracters")
@@ -20,20 +20,22 @@ public class AdminModel extends UserModel{
     @Email(message = "should be a valid email address")
     private String email;
     @NotNull(message = "phone number cannot be null")
-    @Size(min = 10,message = "phone number must be from 10")
+    @Size(min = 10, message = "phone number must be from 10")
     private String phone_number;
     private String role;
     @NotNull(message = "adress cannot be null")
-    @Size(min = 5,message = "adress require 5 characters min")
-    private String address;
+    @Size(min = 5, message = "adress require 5 characters min")
+    private String adress;
     private String picture;
     @NotNull(message = "passwprd cannot be null")
     @Size(min = 10)
     private String password;
     @NotNull(message = "in_conger cannot be null")
     private boolean in_Conger;
+    // @NotNull(message = "entreprise cannot be null")
+    // private int entreprise_id;
 
-    public AdminModel(){
+    public AdminModel() {
         super();
         role = "Admin";
     }
@@ -86,12 +88,12 @@ public class AdminModel extends UserModel{
         this.role = role;
     }
 
-    public String getAddress() {
-        return address;
+    public String getAdress() {
+        return adress;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setAdress(String address) {
+        this.adress = address;
     }
 
     public String getPicture() {
@@ -121,10 +123,8 @@ public class AdminModel extends UserModel{
     @Override
     public String toString() {
         return "AdminModel [id=" + id + ", first_name=" + first_name + ", last_name=" + last_name + ", email=" + email
-                + ", phone_number=" + phone_number + ", role=" + role + ", address=" + address + ", picture=" + picture
+                + ", phone_number=" + phone_number + ", role=" + role + ", address=" + adress + ", picture=" + picture
                 + ", password=" + password + ", in_Conger=" + in_Conger + "]";
     }
-
-
 
 }

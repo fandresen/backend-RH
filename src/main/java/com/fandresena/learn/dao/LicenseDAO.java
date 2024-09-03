@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fandresena.learn.entity.License;
 import com.fandresena.learn.model.LicenseModel;
 import com.fandresena.learn.repository.LicenseRepo;
 
+@Component
 public class LicenseDAO {
 
     @Autowired

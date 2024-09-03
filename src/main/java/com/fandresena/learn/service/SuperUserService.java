@@ -3,12 +3,12 @@ package com.fandresena.learn.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.fandresena.learn.dao.SuperUserDAO;
 import com.fandresena.learn.model.SuperUserModel;
 
-@Component
+@Service
 public class SuperUserService {
 
     private final SuperUserDAO superUser;

@@ -4,22 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fandresena.learn.entity.Absence;
 import com.fandresena.learn.model.AbsenceModel;
 import com.fandresena.learn.repository.AbsenceRepo;
 import com.fandresena.learn.repository.UserRepo;
 
+import lombok.AllArgsConstructor;
+
+@Component
+@AllArgsConstructor
 public class AbsenceDAO {
 
-    @Autowired
     private AbsenceRepo absenceRepo;
-
-    @Autowired
     private UserRepo userRepo;
 
-    @Autowired
-    AbsenceModel absenceModel;
     
     public void createAbsence (AbsenceModel absenceModel){
         Absence absence = new Absence();
@@ -37,6 +37,7 @@ public class AbsenceDAO {
         List<AbsenceModel> absenceModels = new ArrayList<>();
         for(int i=0; i<absences.size(); i++){
             Absence absence = absences.get(i);
+            AbsenceModel absenceModel = new AbsenceModel();
 
             absenceModel.setId(absence.getId());
             absenceModel.setUser_id(absence.getUser().getId());

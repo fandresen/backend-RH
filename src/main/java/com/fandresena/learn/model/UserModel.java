@@ -1,9 +1,14 @@
 package com.fandresena.learn.model;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import java.util.*;
 
-public class UserModel {
+public class UserModel implements UserDetails {
   public UserModel() {
 
     }
@@ -27,11 +32,20 @@ public class UserModel {
     private String password;
     @NotNull(message = "in_conger cannot be null")
     private boolean in_Conger;
-    @NotNull(message = "departement_id cannot be null")
     private int departement_id;
     @NotNull(message = "entreprise_id cannot be null")
-
     private int entreprise_id;
+
+     @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        
+        return List.of(new SimpleGrantedAuthority(this.role));
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
     public int getId() {
         return id;
     }

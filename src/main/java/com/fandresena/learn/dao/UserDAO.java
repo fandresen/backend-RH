@@ -3,10 +3,12 @@ package com.fandresena.learn.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fandresena.learn.entity.User;
+import com.fandresena.learn.entity.Users;
+import com.fandresena.learn.model.AdminModel;
 import com.fandresena.learn.model.UserModel;
 import com.fandresena.learn.repository.DepartementRepo;
 import com.fandresena.learn.repository.EntrepriseRepo;
@@ -23,10 +25,10 @@ public class UserDAO {
     @Autowired
     private EntrepriseRepo entrepriseRepository;
 
-    public void createUser(UserModel userModel){
-        User exist_user = userRepository.findById(userModel.getId()).orElse(null);
-        if(exist_user == null){
-            User user = new User();
+    public void createUser(UserModel userModel) {
+        Users exist_user = userRepository.findByEmail(userModel.getEmail()).orElse(null);
+        if (exist_user == null) {
+            Users user = new Users();
             user.setId(userModel.getId());
             user.setFirst_name(userModel.getFirst_name());
             user.setLast_name(userModel.getLast_name());
@@ -34,18 +36,42 @@ public class UserDAO {
             user.setPhone_number(userModel.getPhone_number());
             user.setRole(userModel.getRole());
             user.setAddress(userModel.getAddress());
+            user.setDepartement(departementRepository.findById(userModel.getDepartement_id()).orElse(null));
+            user.setEntreprise(entrepriseRepository.findById(userModel.getEntreprise_id()).orElse(null));
             user.setPicture(userModel.getPicture());
             user.setPassword(userModel.getPassword());
             user.setIn_Conger(userModel.getIsIn_Conger());
 
             userRepository.save(user);
         }
-       
+
     }
 
-    public UserModel getUserById(int id){
-        User user = userRepository.findById(id).orElse(null);
-        if(user!= null){
+    public void createAdmin(AdminModel adminModel) {
+        Users exist_user = userRepository.findByEmail(adminModel.getEmail()).orElse(null);
+        if (exist_user == null) {
+            Users user = new Users();
+            user.setId(adminModel.getId());
+            user.setFirst_name(adminModel.getFirst_name());
+            user.setLast_name(adminModel.getLast_name());
+            user.setEmail(adminModel.getEmail());
+            user.setPhone_number(adminModel.getPhone_number());
+            user.setRole(adminModel.getRole());
+            user.setAddress(adminModel.getAddress());
+            user.setEntreprise(entrepriseRepository.findById(adminModel.getEntreprise_id()).orElse(null));
+            user.setPicture(adminModel.getPicture());
+            user.setPassword(adminModel.getPassword());
+            user.setIn_Conger(adminModel.getIsIn_Conger());
+
+            userRepository.save(user);
+        }
+
+    }
+
+
+    public UserModel getUserById(int id) {
+        Users user = userRepository.findById(id).orElse(null);
+        if (user != null) {
             UserModel userModel = new UserModel();
             userModel.setFirst_name(user.getFirst_name());
             userModel.setLast_name(user.getLast_name());
@@ -58,17 +84,40 @@ public class UserDAO {
             userModel.setIn_Conger(user.getIsIn_Conger());
             userModel.setDepartement_id(user.getDepartement().getId());
             userModel.setEntreprise_id(user.getEntreprise().getId());
-            
+
             return userModel;
-        }
-        else return null;
+        } else
+            return null;
     }
 
-    public List<UserModel> getAllUsers(){
-        List<User> users = userRepository.findAll();
+    public UserModel findByEmail(String email) {
+        Users user = userRepository.findByEmail(email).orElse(null);
+        UserModel model = new UserModel();
+        if (user != null) {
+            model.setFirst_name(user.getFirst_name());
+            model.setLast_name(user.getLast_name());
+            model.setEmail(user.getEmail());
+            model.setPhone_number(user.getPhone_number());
+            model.setRole(user.getRole());
+            model.setAddress(user.getAddress());
+            model.setPicture(user.getPicture());
+            model.setPassword(user.getPassword());
+            model.setIn_Conger(user.getIsIn_Conger());
+            if(user.getDepartement() != null){
+                model.setDepartement_id(user.getDepartement().getId());
+            }
+            model.setEntreprise_id(user.getEntreprise().getId());
+            return model;
+        } else
+            return null;
+
+    }
+
+    public List<UserModel> getAllUsers() {
+        List<Users> users = userRepository.findAll();
         List<UserModel> userModels = new ArrayList<>();
-        for(int i=0;i<users.size();i++){
-            User user = users.get(i);
+        for (int i = 0; i < users.size(); i++) {
+            Users user = users.get(i);
             UserModel userModel = new UserModel();
 
             userModel.setFirst_name(user.getFirst_name());
@@ -87,9 +136,9 @@ public class UserDAO {
         return userModels;
     }
 
-    public void updateUser(int id, UserModel user){
-        User currentUser = userRepository.findById(id).orElse(null);
-        if(currentUser != null){
+    public void updateUser(int id, UserModel user) {
+        Users currentUser = userRepository.findById(id).orElse(null);
+        if (currentUser != null) {
             currentUser.setFirst_name(user.getFirst_name());
             currentUser.setLast_name(user.getLast_name());
             currentUser.setEmail(user.getEmail());
@@ -105,11 +154,11 @@ public class UserDAO {
         }
     }
 
-    public List<UserModel> getAllUserByDepartementId(int dep_id){
-        List<User> users = userRepository.getAllUsersByDepartementId(dep_id);
+    public List<UserModel> getAllUserByDepartementId(int dep_id) {
+        List<Users> users = userRepository.getAllUsersByDepartementId(dep_id);
         List<UserModel> userModels = new ArrayList<>();
-        for(int i=0;i<users.size();i++){
-            User user = users.get(i);
+        for (int i = 0; i < users.size(); i++) {
+            Users user = users.get(i);
             UserModel userModel = new UserModel();
             userModel.setFirst_name(user.getFirst_name());
             userModel.setLast_name(user.getLast_name());
@@ -127,7 +176,7 @@ public class UserDAO {
         return userModels;
     }
 
-    public void deleteUser(int id){
+    public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
 }

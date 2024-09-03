@@ -15,30 +15,42 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fandresena.learn.DTO.EntrepriseDTO;
 import com.fandresena.learn.dao.EntrepriseDAO;
 import com.fandresena.learn.dao.UserDAO;
+import com.fandresena.learn.model.AdminModel;
 import com.fandresena.learn.model.EntrepriseModel;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/entreprise")
+@AllArgsConstructor
 class EntrepriseController {
 
     private EntrepriseDAO entrepriseDAO;
     private UserDAO userDAO;
 
-    @Autowired
-    public EntrepriseController(EntrepriseDAO entrepriseDAO, UserDAO userDAO) {
-        this.entrepriseDAO = entrepriseDAO;
-        this.userDAO = userDAO;
-    }
+    // @Autowired
+    // public EntrepriseController(EntrepriseDAO entrepriseDAO, UserDAO userDAO) {
+    //     this.entrepriseDAO = entrepriseDAO;
+    //     this.userDAO = userDAO;
+    // }
 
     @PostMapping(consumes = "application/json")
     public ResponseEntity<String> createEntreprise(@Valid @RequestBody EntrepriseDTO data){
        
         // if(data.admin().getRole()== "ADMIN"){
+        try{
             entrepriseDAO.creaEntreprise(data.entreprise());
-            userDAO.createUser(data.admin());
+            int entreprise_id = data.entreprise().getId();
+            AdminModel admin = data.admin();
+            admin.setEntreprise_id(entreprise_id);
+            userDAO.createAdmin(admin);
             return ResponseEntity.ok("Entreprise created successfully"); 
+        }
+        catch(Exception e){
+            return ResponseEntity.badRequest().body("Error creating entreprise");
+        }
+            
         // }
         // else{
         //     System.out.println("tsa mba nety");

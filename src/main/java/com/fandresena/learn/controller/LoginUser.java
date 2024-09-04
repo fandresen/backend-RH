@@ -3,6 +3,7 @@ package com.fandresena.learn.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,15 +24,15 @@ import lombok.AllArgsConstructor;
 @RestController
 @AllArgsConstructor
 public class LoginUser {
-    private AuthenticationManager authenticationManager;
-    // private AccessTokenService accessTokenService;
-    // private RefreshTokenservice refreshTokenservice;
+    
+    @Qualifier("userAuthenticationManager")
+    private AuthenticationManager userAuthenticationManager;
     private JWTService jwtService;
 
     @PostMapping(consumes = "application/json", path = "/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO,HttpServletResponse res ) {
 
-        final Authentication authenticate = authenticationManager.authenticate(
+        final Authentication authenticate = userAuthenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
 
         if (authenticate.isAuthenticated()) {

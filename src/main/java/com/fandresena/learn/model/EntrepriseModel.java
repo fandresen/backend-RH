@@ -31,7 +31,7 @@ public class EntrepriseModel {
     }
     @Override
     public String toString() {
-        return "EntrepriseModel [id=" + id + ", name=" + name + ", license_id=" + "]";
+        return "EntrepriseModel [id=" + id + ", name=" + name + "]";
     }
 
 }

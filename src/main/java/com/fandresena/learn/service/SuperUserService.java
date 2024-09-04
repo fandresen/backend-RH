@@ -2,32 +2,34 @@ package com.fandresena.learn.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fandresena.learn.dao.SuperUserDAO;
 import com.fandresena.learn.model.SuperUserModel;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class SuperUserService {
 
-    private final SuperUserDAO superUser;
+    private SuperUserDAO superUserDAO;
+    private BCryptPasswordEncoder passwordEncoder; 
 
-    @Autowired
-    public SuperUserService(SuperUserDAO superUser) {
-        this.superUser = superUser;
-    }
 
     public List<SuperUserModel> getAllSuperUsers() {
-        return superUser.getAllSuperuser();
+        return superUserDAO.getAllSuperuser();
     }
 
     public SuperUserModel getSuperUserById(int id) {
-        return superUser.getSuperUserById(id);
+        return superUserDAO.getSuperUserById(id);
     }
 
     public void createSuperUser(SuperUserModel superUserModel) throws Exception { 
-            superUser.createSuperUser(superUserModel);
+            String password = passwordEncoder.encode(superUserModel.getPassword());
+            superUserModel.setPassword(password);
+            superUserDAO.createSuperUser(superUserModel);
     }
 
 

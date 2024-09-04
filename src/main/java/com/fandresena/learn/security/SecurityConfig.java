@@ -1,16 +1,17 @@
 package com.fandresena.learn.security;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -18,14 +19,22 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import com.fandresena.learn.service.LoginSuperUserService;
+import com.fandresena.learn.service.LoginUserService;
+
 import lombok.AllArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
+
     private JwtFilter jwtFilter;
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private LoginUserService loginUserService;
+    private LoginSuperUserService loginSuperUserService;
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
          httpSecurity
@@ -34,6 +43,7 @@ public class SecurityConfig {
                 authorize-> authorize
                                 .requestMatchers("/login").permitAll()
                                 .requestMatchers("/access-token").permitAll()
+                                .requestMatchers("/superuser/login").permitAll()
                                 .anyRequest().authenticated()
                               
             ))
@@ -63,8 +73,22 @@ public class SecurityConfig {
     
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
-        return authenticationConfiguration.getAuthenticationManager();
+    @Primary
+    @Qualifier("userAuthenticationManager")
+    public AuthenticationManager userAuthenticationManager(AuthenticationConfiguration authenticationConfiguration){
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(loginUserService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        return new ProviderManager(daoAuthenticationProvider);
+    }
+
+    @Bean
+    @Qualifier("superUserAuthenticationManager")
+    public AuthenticationManager superUserAuthenticationManager(AuthenticationConfiguration authenticationConfiguration){
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(loginSuperUserService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        return new ProviderManager(daoAuthenticationProvider);
     }
 
     @Bean
@@ -72,11 +96,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean 
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService){
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        daoAuthenticationProvider.setPasswordEncoder(this.passwordEncoder());
-        return daoAuthenticationProvider;
-    }
 }

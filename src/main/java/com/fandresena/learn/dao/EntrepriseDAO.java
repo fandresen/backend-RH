@@ -15,10 +15,14 @@ public class EntrepriseDAO {
     @Autowired
     private EntrepriseRepo entrepriseRepo;
 
-    public void creaEntreprise(EntrepriseModel entrepriseModel) {
+    public EntrepriseModel creaEntreprise(EntrepriseModel entrepriseModel) {
         Entreprise entreprise = new Entreprise();
         entreprise.setName(entrepriseModel.getName());
-        entrepriseRepo.save(entreprise);
+        Entreprise savedEntreprise = entrepriseRepo.save(entreprise);
+        EntrepriseModel savedEntrepriseModel = new EntrepriseModel();
+        savedEntrepriseModel.setName(savedEntreprise.getName());
+        savedEntrepriseModel.setId(savedEntreprise.getId());
+        return savedEntrepriseModel;
     }
 
     public EntrepriseModel getEntrepriseById(int id) {

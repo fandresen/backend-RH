@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class LoginService implements UserDetailsService{
+public class LoginUserService implements UserDetailsService{
     private UserDAO userDAO;
 
     @Override

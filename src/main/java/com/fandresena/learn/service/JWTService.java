@@ -12,8 +12,11 @@ import org.springframework.stereotype.Service;
 
 import com.fandresena.learn.dao.AccessTokenDAO;
 import com.fandresena.learn.dao.RefreshTokenDAO;
+import com.fandresena.learn.dao.SuperUserDAO;
+import com.fandresena.learn.dao.UserDAO;
 import com.fandresena.learn.model.AccessTokenModel;
 import com.fandresena.learn.model.RefreshTokenModel;
+import com.fandresena.learn.model.SuperUserModel;
 import com.fandresena.learn.model.UserModel;
 
 import io.jsonwebtoken.Jwts;
@@ -26,6 +29,8 @@ public class JWTService {
 
     private AccessTokenDAO accessTokenDAO;
     private RefreshTokenDAO refreshTokenDAO;
+    private UserDAO userDAO;
+    private SuperUserDAO superUserDAO;
 
     RefreshTokenModel refreshTokenModel;
     AccessTokenModel accessTokenModel;
@@ -33,16 +38,32 @@ public class JWTService {
     final String SECRET_KEY = "AVQ445IUvbf563HHd584XgHTIKdfjxhVV2h27nCBkTGb7NK3QEghlB1lldhgzlsqsedfHHjhJhlsYYoNlXsEzKTv8YAXWdBp6cH4yc";
     final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
-    public JWTService(AccessTokenDAO accessTokenDAO, RefreshTokenDAO refreshTokenDAO) {
+    public JWTService(AccessTokenDAO accessTokenDAO, RefreshTokenDAO refreshTokenDAO, UserDAO userDAO,SuperUserDAO superUserDAO) {
         this.accessTokenDAO = accessTokenDAO;
         this.refreshTokenDAO = refreshTokenDAO;
+        this.userDAO = userDAO;
+        this.superUserDAO = superUserDAO;
     }
 
-    public String generateAccessToken(String username) {
+    public String generateAccessToken(String userName) {
         final Date now = new Date();
         final Date expirationDate = new Date(now.getTime() + 60 * 60 * 1000); // 1 heures
+        
+        //get user or superUser role
+        UserModel user = userDAO.findByEmail(userName);
+        Map<String, Object> claims = new HashMap<String, Object>();
+        if(user != null){
+            claims.put("role", user.getRole());
+        }
+        else{
+            SuperUserModel superUser = superUserDAO.findByEmail(userName);
+            claims.put("role", superUser.getAuthorities());
+        }
+        
+
         String accessToken = Jwts.builder()
-                .setSubject(username)
+                .setClaims(claims)
+                .setSubject(userName)
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -155,12 +176,13 @@ public class JWTService {
                         Map<String, String> accessToken = new HashMap();
                         accessToken.put("accessToken", token);
                         return accessToken;
-                    } 
-                    else return Map.of( "error", "Invalid refresh token");    
+                    } else
+                        return Map.of("error", "Invalid refresh token");
                 }
             }
-          
-    }
-    return Map.of("error", "Invalid refresh token");}
 
+        }
+        return Map.of("error", "Invalid refresh token");
     }
+
+}

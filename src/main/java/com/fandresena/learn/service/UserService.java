@@ -4,6 +4,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fandresena.learn.dao.UserDAO;
+import com.fandresena.learn.model.AdminModel;
 import com.fandresena.learn.model.UserModel;
 
 import java.util.List;
@@ -29,6 +30,13 @@ public class UserService {
             superUserModel.setPassword(password);  
             userDAO.createUser(superUserModel);
     }
+
+    public void createAdmin(AdminModel adminModel){
+        String password = passwordEncoder.encode(adminModel.getPassword());
+        adminModel.setPassword(password);  
+            userDAO.createAdmin(adminModel);
+    }
+
     public List<UserModel> getByDepartementId(int id){
        List<UserModel> users = userDAO.getAllUserByDepartementId(id);
        return users;

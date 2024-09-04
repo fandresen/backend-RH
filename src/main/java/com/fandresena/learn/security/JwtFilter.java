@@ -36,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         // list of the path we don't want to filter
-        String[] filterList = { "/login", "/access-token" };
+        String[] filterList = { "/login", "/access-token","/superuser/login" };
 
         if (List.of(filterList).contains(request.getServletPath())) {
             chain.doFilter(request, response);

@@ -35,6 +35,23 @@ public class SuperUserDAO {
         else return null;
     }
 
+    //find by email 
+    public SuperUserModel findByEmail(String email){
+        Superuser sup_user = superUserRepo.findByEmail(email).orElse(null);
+        SuperUserModel model = new SuperUserModel();
+        if(sup_user != null){
+            model.setId(sup_user.getId());
+            model.setEmail(sup_user.getEmail());
+            model.setPassword(sup_user.getPassword());
+            return model;
+        }
+        else return null;
+
+    }
+
+
+
+
     public List<SuperUserModel> getAllSuperuser(){
     List<Superuser> superUsers = superUserRepo.findAll();
     List<SuperUserModel> superUserModels = new ArrayList<>();

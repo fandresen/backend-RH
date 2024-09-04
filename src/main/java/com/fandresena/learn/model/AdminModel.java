@@ -32,12 +32,20 @@ public class AdminModel extends UserModel {
     private String password;
     @NotNull(message = "in_conger cannot be null")
     private boolean in_Conger;
-    // @NotNull(message = "entreprise cannot be null")
-    // private int entreprise_id;
+    @NotNull(message = "entreprise cannot be null")
+    private int entreprise_id;
+
+    public int getEntreprise_id() {
+        return entreprise_id;
+    }
+
+    public void setEntreprise_id(int entreprise_id) {
+        this.entreprise_id = entreprise_id;
+    }
 
     public AdminModel() {
         super();
-        role = "Admin";
+        role = "ADMIN";
     }
 
     public int getId() {

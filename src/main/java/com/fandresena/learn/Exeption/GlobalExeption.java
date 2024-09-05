@@ -4,6 +4,7 @@ import java.security.SignatureException;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -22,6 +23,11 @@ public class GlobalExeption extends ResponseEntityExceptionHandler {
     @ExceptionHandler({MalformedJwtException.class, SignatureException.class, UnsupportedJwtException.class})
     public ResponseEntity<String> handleInvalidJwtExeption(Exception ex){
         return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("invalid token");
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedExeption(AccessDeniedException ex){
+        return ResponseEntity.status(HttpStatusCode.valueOf(403)).body("access denied");
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

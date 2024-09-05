@@ -7,7 +7,6 @@ public class DepartementModel {
     private int id;
     @NotNull(message = "Departement name cannot be null")
     private String name;
-    @NotNull(message = "entreprise_id cannot be null")
     private int entreprise_id;
 
     public DepartementModel() {

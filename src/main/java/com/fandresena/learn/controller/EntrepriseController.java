@@ -3,6 +3,7 @@ package com.fandresena.learn.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,8 @@ import com.fandresena.learn.DTO.EntrepriseDTO;
 import com.fandresena.learn.dao.EntrepriseDAO;
 import com.fandresena.learn.model.AdminModel;
 import com.fandresena.learn.model.EntrepriseModel;
+import com.fandresena.learn.service.PasswordGeneratorService;
+import com.fandresena.learn.service.SendEmailService;
 import com.fandresena.learn.service.UserService;
 
 import jakarta.validation.Valid;
@@ -28,6 +31,7 @@ class EntrepriseController {
     private EntrepriseDAO entrepriseDAO;
     private UserService userSevice;
 
+    @PreAuthorize("hasAuthority('SUP_USER')")
     @PostMapping(consumes = "application/json")
     public ResponseEntity<String> createEntreprise(@Valid @RequestBody EntrepriseDTO data) {
 
@@ -35,7 +39,13 @@ class EntrepriseController {
             EntrepriseModel entrepriseModel = entrepriseDAO.creaEntreprise(data.entreprise());
             int entreprise_id = entrepriseModel.getId();
             AdminModel admin = data.admin();
-            //Inert entreprise id in Admin so that admin.entreprise won't be null
+
+            //Generate password and send it to user Email
+            String password = PasswordGeneratorService.generatepassword(12);
+            admin.setPassword(password);
+            SendEmailService.sendEmail(admin.getEmail(),"Your ZenRH password","this is your password: "+password);
+
+            //Insert entreprise id in Admin so that admin.entreprise won't be null
             admin.setEntreprise_id(entreprise_id);
             userSevice.createAdmin(admin);
             return ResponseEntity.ok("Entreprise created successfully");
@@ -45,11 +55,14 @@ class EntrepriseController {
 
     }
 
+    @PreAuthorize("hasAuthority('SUP_USER')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<EntrepriseModel>> getAllEntreprises() {
-        return ResponseEntity.ok(entrepriseDAO.getAllEntreprise());
+        List<EntrepriseModel> entreprises = entrepriseDAO.getAllEntreprise();
+        return ResponseEntity.ok(entreprises);
     }
 
+    @PreAuthorize("hasAuthority('SUP_USER')")
     @DeleteMapping
     public ResponseEntity<String> deleteEntreprise(@RequestParam("id") int id) {
         entrepriseDAO.deleteEntreprise(id);

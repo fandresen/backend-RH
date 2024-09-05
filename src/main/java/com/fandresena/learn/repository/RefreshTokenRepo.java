@@ -1,6 +1,6 @@
 package com.fandresena.learn.repository;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,7 +14,7 @@ public interface RefreshTokenRepo extends JpaRepository<RefreshToken, Long> {
 
     @Modifying
     @Query("DELETE FROM RefreshToken rt WHERE rt.expirDate < :now")
-    void deleteAllByExpireDateBefore(@Param("now") Date now);
+    void deleteAllByExpireDateBefore(@Param("now") LocalDateTime now);
 
     @Modifying
     @Query("DELETE FROM RefreshToken rt WHERE rt.token = :refreshToken")

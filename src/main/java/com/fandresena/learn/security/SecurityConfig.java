@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,12 +27,14 @@ import lombok.AllArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @AllArgsConstructor
 public class SecurityConfig {
 
     private JwtFilter jwtFilter;
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private LoginUserService loginUserService;
+    private AccessDenied accessDenied;
     private LoginSuperUserService loginSuperUserService;
 
 
@@ -49,6 +52,7 @@ public class SecurityConfig {
             ))
             .exceptionHandling(exceptionHandling -> exceptionHandling
             .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            .accessDeniedHandler(accessDenied)
         )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 

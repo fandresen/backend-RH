@@ -31,7 +31,7 @@ public class UserModel implements UserDetails {
     @NotNull(message = "passwordcannot be null")
     private String password;
     @NotNull(message = "in_conger cannot be null")
-    private boolean in_Conger;
+    private boolean in_Conger = false;
     private int departement_id;
     @NotNull(message = "entreprise_id cannot be null")
     private int entreprise_id;

@@ -23,6 +23,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
+import jakarta.transaction.Transactional;
 
 @Service
 public class JWTService {
@@ -54,6 +55,7 @@ public class JWTService {
         Map<String, Object> claims = new HashMap<String, Object>();
         if(user != null){
             claims.put("role", user.getRole());
+            claims.put("entreprise_id", user.getEntreprise_id());
         }
         else{
             SuperUserModel superUser = superUserDAO.findByEmail(userName);
@@ -99,7 +101,10 @@ public class JWTService {
         return accessTokenDAO.getAccessTokenByToken(accessToken.getToken()) != null;
     }
 
+    @Transactional
     public boolean isTokenValid(String token, UserDetails userDetails) {
+        accessTokenDAO.deleteExpiredAccessToken();
+        refreshTokenDAO.deleteExpiredRefreshToken();
         String username = extractUserEmail(token);
 
         // the username in token should match username , and the token is not expired
@@ -162,6 +167,14 @@ public class JWTService {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+    public int extractEntrepriseId(String token){
+        return Jwts.parserBuilder()
+               .setSigningKey(key)
+               .build()
+               .parseClaimsJws(token)
+               .getBody()
+               .get("entreprise_id", Integer.class);
     }
 
     public Map<String, String> generateAccessTFromRefreshT(Cookie[] cookies) {

@@ -1,5 +1,6 @@
 package com.fandresena.learn.dao;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ public class RefreshTokenDAO {
 
     //delete refresh token expired
     public void deleteExpiredRefreshToken(){
-        refreshTokenRepo.deleteAllByExpireDateBefore(new Date());
+        refreshTokenRepo.deleteAllByExpireDateBefore(LocalDateTime.now());
     }
 
     public void deleteRefreshTokenByToken(String refreshToken){

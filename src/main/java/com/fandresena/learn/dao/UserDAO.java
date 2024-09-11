@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +16,13 @@ import com.fandresena.learn.model.UserModel;
 import com.fandresena.learn.repository.DepartementRepo;
 import com.fandresena.learn.repository.EntrepriseRepo;
 import com.fandresena.learn.repository.UserRepo;
+import com.fandresena.learn.service.UserService;
+
+import jakarta.transaction.Transactional;
 
 @Component
 public class UserDAO {
+       private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private UserRepo userRepository;
 
@@ -39,6 +46,7 @@ public class UserDAO {
             user.setDepartement(departementRepository.findById(userModel.getDepartement_id()).orElse(null));
             user.setEntreprise(entrepriseRepository.findById(userModel.getEntreprise_id()).orElse(null));
             user.setPicture(userModel.getPicture());
+            user.setActive(userModel.isActive());
             user.setPassword(userModel.getPassword());
             user.setIn_Conger(userModel.getIsIn_Conger());
 
@@ -61,6 +69,7 @@ public class UserDAO {
             user.setEntreprise(entrepriseRepository.findById(adminModel.getEntreprise_id()).orElse(null));
             user.setPicture(adminModel.getPicture());
             user.setPassword(adminModel.getPassword());
+            user.setActive(adminModel.isActive());
             user.setIn_Conger(adminModel.getIsIn_Conger());
 
             userRepository.save(user);
@@ -73,6 +82,7 @@ public class UserDAO {
         Users user = userRepository.findById(id).orElse(null);
         if (user != null) {
             UserModel userModel = new UserModel();
+            userModel.setId(user.getId());
             userModel.setFirst_name(user.getFirst_name());
             userModel.setLast_name(user.getLast_name());
             userModel.setEmail(user.getEmail());
@@ -82,7 +92,10 @@ public class UserDAO {
             userModel.setPicture(user.getPicture());
             userModel.setPassword(user.getPassword());
             userModel.setIn_Conger(user.getIsIn_Conger());
-            userModel.setDepartement_id(user.getDepartement().getId());
+            userModel.setActive(user.isActive());
+            if(user.getDepartement() != null){
+                userModel.setDepartement_id(user.getDepartement().getId());
+            }
             userModel.setEntreprise_id(user.getEntreprise().getId());
 
             return userModel;
@@ -94,6 +107,7 @@ public class UserDAO {
         Users user = userRepository.findByEmail(email).orElse(null);
         UserModel model = new UserModel();
         if (user != null) {
+            model.setId(user.getId());
             model.setFirst_name(user.getFirst_name());
             model.setLast_name(user.getLast_name());
             model.setEmail(user.getEmail());
@@ -103,6 +117,7 @@ public class UserDAO {
             model.setPicture(user.getPicture());
             model.setPassword(user.getPassword());
             model.setIn_Conger(user.getIsIn_Conger());
+            model.setActive(user.isActive());
             if(user.getDepartement() != null){
                 model.setDepartement_id(user.getDepartement().getId());
             }
@@ -130,14 +145,16 @@ public class UserDAO {
             userModel.setPassword(user.getPassword());
             userModel.setDepartement_id(user.getDepartement().getId());
             userModel.setIn_Conger(user.getIsIn_Conger());
+            userModel.setActive(user.isActive());
             userModel.setEntreprise_id(user.getEntreprise().getId());
         }
 
         return userModels;
     }
 
-    public void updateUser(int id, UserModel user) {
-        Users currentUser = userRepository.findById(id).orElse(null);
+    @Transactional
+    public void updateUser(UserModel user) {
+        Users currentUser = userRepository.findById(user.getId()).orElse(null);
         if (currentUser != null) {
             currentUser.setFirst_name(user.getFirst_name());
             currentUser.setLast_name(user.getLast_name());
@@ -147,8 +164,12 @@ public class UserDAO {
             currentUser.setAddress(user.getAddress());
             currentUser.setPicture(user.getPicture());
             currentUser.setPassword(user.getPassword());
+            logger.info("Password : "+ user.getPassword());
             currentUser.setIn_Conger(user.getIsIn_Conger());
-            currentUser.setDepartement(departementRepository.findById(user.getDepartement_id()).orElse(null));
+            currentUser.setActive(user.isActive());
+            if(currentUser.getDepartement()!=null){
+                currentUser.setDepartement(departementRepository.findById(user.getDepartement_id()).orElse(null));
+            }
             currentUser.setEntreprise(entrepriseRepository.findById(user.getEntreprise_id()).orElse(null));
             userRepository.save(currentUser);
         }
@@ -171,6 +192,7 @@ public class UserDAO {
             userModel.setIn_Conger(user.getIsIn_Conger());
             userModel.setDepartement_id(user.getDepartement().getId());
             userModel.setEntreprise_id(user.getEntreprise().getId());
+            userModel.setActive(user.isActive());
             userModels.add(userModel);
         }
         return userModels;

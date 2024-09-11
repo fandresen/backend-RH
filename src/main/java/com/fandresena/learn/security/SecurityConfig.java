@@ -47,6 +47,7 @@ public class SecurityConfig {
                                 .requestMatchers("/login").permitAll()
                                 .requestMatchers("/access-token").permitAll()
                                 .requestMatchers("/superuser/login").permitAll()
+                                .requestMatchers("/createPassword").permitAll()
                                 .anyRequest().authenticated()
                               
             ))

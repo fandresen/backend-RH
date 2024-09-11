@@ -2,6 +2,9 @@ package com.fandresena.learn.controller;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,11 +45,18 @@ public class DepartementController {
 
     @GetMapping(produces = "application/json")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> getAllDepartementByEntreprise(int entrepriseId) {
+    public ResponseEntity<?> getAllDepartementByEntreprise(HttpServletRequest res) {
+        String token = res.getHeader("Authorization");
+        token = token.substring(7);
+        int entrepriseId = jwtService.extractEntrepriseId(token);
         try {
-            return ResponseEntity.ok(departementDAO.getAllDepartementByEntreprise(entrepriseId));
+            List<DepartementModel> departements = departementDAO.getAllDepartementByEntreprise(entrepriseId);
+            return ResponseEntity.ok(departements);
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error retrieving departments");
+            // e.getStackTrace();
+            System.out.println(e.getCause());
+            return ResponseEntity.badRequest().body("Error retrieving departments "+e.getMessage());
         }
     }
 

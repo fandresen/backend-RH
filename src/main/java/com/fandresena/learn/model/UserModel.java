@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.*;
 
 public class UserModel implements UserDetails {
@@ -30,9 +31,17 @@ public class UserModel implements UserDetails {
     private String picture;
     @NotNull(message = "passwordcannot be null")
     private String password;
-    @NotNull(message = "in_conger cannot be null")
     private boolean in_Conger = false;
     private int departement_id;
+    private boolean active = false;
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @NotNull(message = "entreprise_id cannot be null")
     private int entreprise_id;
 

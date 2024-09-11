@@ -16,9 +16,9 @@ import com.fandresena.learn.DTO.EntrepriseDTO;
 import com.fandresena.learn.dao.EntrepriseDAO;
 import com.fandresena.learn.model.AdminModel;
 import com.fandresena.learn.model.EntrepriseModel;
-import com.fandresena.learn.service.PasswordGeneratorService;
+import com.fandresena.learn.service.TokenGeneratorService;
+import com.fandresena.learn.service.NewPasswordTokenService;
 import com.fandresena.learn.service.SendEmailService;
-import com.fandresena.learn.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ import lombok.AllArgsConstructor;
 class EntrepriseController {
 
     private EntrepriseDAO entrepriseDAO;
-    private UserService userSevice;
+    private NewPasswordTokenService newPasswordTokenService;
 
     @PreAuthorize("hasAuthority('SUP_USER')")
     @PostMapping(consumes = "application/json")
@@ -40,15 +40,17 @@ class EntrepriseController {
             int entreprise_id = entrepriseModel.getId();
             AdminModel admin = data.admin();
 
-            //Generate password and send it to user Email
-            String password = PasswordGeneratorService.generatepassword(12);
-            admin.setPassword(password);
-            SendEmailService.sendEmail(admin.getEmail(),"Your ZenRH password","this is your password: "+password);
+             // Insert entreprise id in Admin so that admin.entreprise won't be null
+             admin.setEntreprise_id(entreprise_id);
 
-            //Insert entreprise id in Admin so that admin.entreprise won't be null
-            admin.setEntreprise_id(entreprise_id);
-            userSevice.createAdmin(admin);
+            // Generate newPasswordToken
+            String token = TokenGeneratorService.generatepassword(12);
+            String realToken = newPasswordTokenService.createToken(admin, token);
+            SendEmailService.sendEmail(admin.getEmail(), "Your ZenRH password", "click here to create your password: http://localhost:5173/newPassword?tkn=" + realToken);
+
+           
             return ResponseEntity.ok("Entreprise created successfully");
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error creating entreprise");
         }

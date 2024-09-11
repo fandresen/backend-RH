@@ -18,9 +18,12 @@ public class SendEmailService {
         properties.put("mail.smtp.port", "587"); 
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
 
         String username = "eliotscript@gmail.com";
-        String password = "leym ewhc bdmj oqpe";
+        String password = "xlrr ahaq klsc zkmf";
+
+        properties.put("mail.debug", "true");
 
         Session session = Session.getInstance(properties,new Authenticator(){
             @Override

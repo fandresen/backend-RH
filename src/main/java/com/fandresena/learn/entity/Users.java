@@ -6,12 +6,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Users {
-    public Users() {
-
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,13 +26,14 @@ public class Users {
     private String picture;
     private String password;
     private boolean in_Conger;
+    private boolean active = false;
+
     @ManyToOne
-    @JoinColumn(name = "departement_id",nullable = true)
+    @JoinColumn(name = "departement_id", nullable = true)
     private Departement departement;
 
-
     @ManyToOne
-    @JoinColumn(name = "entreprise_id",nullable = true)
+    @JoinColumn(name = "entreprise_id", nullable = true)
     private Entreprise entreprise;
 
     public int getId() {
@@ -128,6 +130,14 @@ public class Users {
 
     public void setEntreprise(Entreprise entreprise) {
         this.entreprise = entreprise;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
 }

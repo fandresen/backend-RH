@@ -1,5 +1,7 @@
 package com.fandresena.learn.controller;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -46,7 +48,8 @@ class EntrepriseController {
             // Generate newPasswordToken
             String token = TokenGeneratorService.generatepassword(12);
             String realToken = newPasswordTokenService.createToken(admin, token);
-            SendEmailService.sendEmail(admin.getEmail(), "Your ZenRH password", "click here to create your password: http://localhost:5173/newPassword?tkn=" + realToken);
+            String template = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/CreateNewPassword.html")));
+            SendEmailService.sendEmail(admin.getEmail(), "Compte ZenRH", admin.getFirst_name() , " http://192.168.1.87:5173/newPassword?tkn="+realToken,template);
 
            
             return ResponseEntity.ok("Entreprise created successfully");

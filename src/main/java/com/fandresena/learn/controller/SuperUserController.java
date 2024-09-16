@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseCookie;
@@ -22,6 +24,7 @@ import com.fandresena.learn.DTO.LoginDTO;
 import com.fandresena.learn.model.SuperUserModel;
 import com.fandresena.learn.service.JWTService;
 import com.fandresena.learn.service.SuperUserService;
+import com.fandresena.learn.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -29,6 +32,9 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/superuser")
 public class SuperUserController {
+
+     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     private AuthenticationManager superUserAuthenticationManager;
     private final SuperUserService superUserService;
      private JWTService jwtService;
@@ -60,6 +66,7 @@ public class SuperUserController {
     @PostMapping(path = "/login",consumes = "application/json")
     public ResponseEntity<?> loginSuperUser(@RequestBody LoginDTO loginDTO,HttpServletResponse res){
         
+        logger.info("login super user");
          final Authentication authenticate = superUserAuthenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
 

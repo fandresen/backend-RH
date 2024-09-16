@@ -13,29 +13,26 @@ import com.fandresena.learn.model.UserModel;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 @Service
 public class UserService {
-      private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     @Autowired
-
     private UserDAO userDAO;
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public List<UserModel> getAllUsers() {
-        return userDAO.getAllUsers();
+        return userDAO.getAllUsersByRole("USER");
     }
 
     public UserModel getUserById(int id) {
         return userDAO.getUserById(id);
     }
 
-    public void createUser(UserModel superUserModel) throws Exception {
-        String password = passwordEncoder.encode(superUserModel.getPassword());
-        superUserModel.setPassword(password);
-        userDAO.createUser(superUserModel);
+    public void createUser(UserModel userModel) {
+        String password = passwordEncoder.encode(userModel.getPassword());
+        userModel.setPassword(password);
+        userDAO.createUser(userModel);
     }
 
     public void createAdmin(AdminModel adminModel) {
@@ -50,7 +47,7 @@ public class UserService {
     }
 
     public List<UserModel> getAllByEntrepriseId(int entrepriseId) {
-        List<UserModel> users = userDAO.getAllUsers();
+        List<UserModel> users = userDAO.getAllUsersByRole("USER");
         List<UserModel> entrepriseUsers = users.stream().filter(user -> user.getEntreprise_id() == entrepriseId)
                 .collect(Collectors.toList());
         return entrepriseUsers;

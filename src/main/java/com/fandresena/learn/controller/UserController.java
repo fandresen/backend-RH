@@ -1,5 +1,7 @@
 package com.fandresena.learn.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     UserService userService;
     JWTService jwtService;
     @PostMapping(consumes = "application/json")
@@ -64,7 +67,8 @@ public class UserController {
             return ResponseEntity.ok(users);
         }
         catch (Exception e){
-            return ResponseEntity.badRequest().body("Error retrieving users");
+            logger.error(e.getLocalizedMessage());
+            return ResponseEntity.badRequest().body("Error retrieving users ");
         }
      
     }

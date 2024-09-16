@@ -3,6 +3,8 @@ package com.fandresena.learn.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import com.fandresena.learn.DTO.LoginDTO;
 // import com.fandresena.learn.service.AccessTokenService;
 import com.fandresena.learn.service.JWTService;
 // import com.fandresena.learn.service.RefreshTokenservice;
+import com.fandresena.learn.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -25,13 +28,14 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class LoginUser {
     
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     @Qualifier("userAuthenticationManager")
     private AuthenticationManager userAuthenticationManager;
     private JWTService jwtService;
 
     @PostMapping(consumes = "application/json", path = "/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO,HttpServletResponse res ) {
-
+        logger.info("login user work");
         final Authentication authenticate = userAuthenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
 

@@ -14,4 +14,7 @@ public interface NewPasswordTokenRepo extends JpaRepository<NewPasswordToken,Int
     void deleteAllByExpireDateBefore(@Param("now") LocalDateTime now);
 
     NewPasswordToken findByToken(String token);
+    
+    @Query("SELECT token FROM NewPasswordToken token INNER JOIN token.user u WHERE u.id = :user_id")
+    NewPasswordToken findByUser_id(@Param("user_id")int user_id);
 }

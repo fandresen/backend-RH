@@ -1,5 +1,6 @@
 package com.fandresena.learn.service;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.mail.*;
@@ -7,9 +8,10 @@ import javax.mail.internet.*;
 
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class SendEmailService {
-    public static void sendEmail(String to,String subject,String body){
+    public static void sendEmail(String to,String subject,String name, String link,String template)throws IOException {
         String from = "eliotscript@gmail.com"; 
         String host = "smtp.gmail.com";
 
@@ -37,7 +39,12 @@ public class SendEmailService {
             message.setFrom(new InternetAddress(from));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
             message.setSubject(subject);
-            message.setText(body);
+
+            //Read template HTML
+            String body = template.replace("{{Name}}",name).replace("{{link}}", link);
+
+            message.setContent(body, "text/html; charset=utf-8");
+            
             Transport.send(message);
             System.out.println("Email sent successfully to " + to);
 

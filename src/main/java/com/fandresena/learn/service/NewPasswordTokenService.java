@@ -41,6 +41,10 @@ public class NewPasswordTokenService {
         newPasswordTokenDAO.deleteExpiredTokens();
     }
 
+    public void deleteTokenByUserId(int user_id){
+        newPasswordTokenDAO.deleteTokenByUserId(user_id);
+    }
+
     public UserModel findUser(String token) {
         NewPasswordTokenModel newToken = newPasswordTokenDAO.findTokenByToken(token);
         return userDAO.getUserById(newToken.getUser_id());

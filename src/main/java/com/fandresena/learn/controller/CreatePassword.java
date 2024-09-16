@@ -25,9 +25,15 @@ public class CreatePassword {
     private NewPasswordTokenService newPasswordTokenService;
     private UserService userService;
 
+    public record PasswordDTO(String password) {
+
+    }
+
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<?> createPassword(@RequestParam String tkn, @RequestBody String password) {
+    public ResponseEntity<?> createPassword(@RequestParam String tkn, @RequestBody PasswordDTO data) {
         boolean valid = false;
+        String password = data.password();
+        
         try {
             valid = newPasswordTokenService.isvallidToken(tkn);
         } catch (NullPointerException e) {
@@ -36,7 +42,6 @@ public class CreatePassword {
        
         if (valid) {
             UserModel user = newPasswordTokenService.findUser(tkn);
-            // logger.info("id :"+user.getId());
             userService.changePassword(user, password);
             newPasswordTokenService.deleteExpiredTokens();
             return ResponseEntity.ok("Password changed successfully");

@@ -128,13 +128,12 @@ public class UserDAO {
 
     }
 
-    public List<UserModel> getAllUsers() {
-        List<Users> users = userRepository.findAll();
+    public List<UserModel> getAllUsersByRole(String role) {
+        List<Users> users = userRepository.getAllUserByRole(role);
         List<UserModel> userModels = new ArrayList<>();
         for (int i = 0; i < users.size(); i++) {
             Users user = users.get(i);
             UserModel userModel = new UserModel();
-
             userModel.setFirst_name(user.getFirst_name());
             userModel.setLast_name(user.getLast_name());
             userModel.setEmail(user.getEmail());
@@ -147,6 +146,7 @@ public class UserDAO {
             userModel.setIn_Conger(user.getIsIn_Conger());
             userModel.setActive(user.isActive());
             userModel.setEntreprise_id(user.getEntreprise().getId());
+            userModels.add(userModel);
         }
 
         return userModels;

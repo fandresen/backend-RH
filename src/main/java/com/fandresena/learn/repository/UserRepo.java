@@ -12,5 +12,8 @@ public interface UserRepo extends JpaRepository<Users, Integer> {
     @Query("SELECT u FROM Users u INNER JOIN u.departement d WHERE d.id = :id")
     List<Users> getAllUsersByDepartementId(int id);
 
+    @Query("SELECT u FROM Users u WHERE u.role = :role")
+    List<Users> getAllUserByRole(String role);
+
     Optional<Users> findByEmail(String email);
 }

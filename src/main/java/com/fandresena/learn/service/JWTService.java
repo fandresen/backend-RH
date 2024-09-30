@@ -39,7 +39,8 @@ public class JWTService {
     final String SECRET_KEY = "AVQ445IUvbf563HHd584XgHTIKdfjxhVV2h27nCBkTGb7NK3QEghlB1lldhgzlsqsedfHHjhJhlsYYoNlXsEzKTv8YAXWdBp6cH4yc";
     final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
-    public JWTService(AccessTokenDAO accessTokenDAO, RefreshTokenDAO refreshTokenDAO, UserDAO userDAO,SuperUserDAO superUserDAO) {
+    public JWTService(AccessTokenDAO accessTokenDAO, RefreshTokenDAO refreshTokenDAO, UserDAO userDAO,
+            SuperUserDAO superUserDAO) {
         this.accessTokenDAO = accessTokenDAO;
         this.refreshTokenDAO = refreshTokenDAO;
         this.userDAO = userDAO;
@@ -48,20 +49,20 @@ public class JWTService {
 
     public String generateAccessToken(String userName) {
         final Date now = new Date();
-        final Date expirationDate = new Date(now.getTime() + 60 * 60 * 1000); // 1 heures
-        
-        //get user or superUser role
+        final Date expirationDate = new Date(now.getTime() + 60 * 60 * 1000); // 1 h
+
+        // get user or superUser role
         UserModel user = userDAO.findByEmail(userName);
         Map<String, Object> claims = new HashMap<String, Object>();
-        if(user != null){
+        if (user != null) {
             claims.put("role", user.getRole());
             claims.put("entreprise_id", user.getEntreprise_id());
-        }
-        else{
+            claims.put("userName", user.getLast_name());
+
+        } else {
             SuperUserModel superUser = superUserDAO.findByEmail(userName);
             claims.put("role", superUser.getAuthorities());
         }
-        
 
         String accessToken = Jwts.builder()
                 .setClaims(claims)
@@ -168,13 +169,14 @@ public class JWTService {
                 .getBody()
                 .getSubject();
     }
-    public int extractEntrepriseId(String token){
+
+    public int extractEntrepriseId(String token) {
         return Jwts.parserBuilder()
-               .setSigningKey(key)
-               .build()
-               .parseClaimsJws(token)
-               .getBody()
-               .get("entreprise_id", Integer.class);
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("entreprise_id", Integer.class);
     }
 
     public Map<String, String> generateAccessTFromRefreshT(Cookie[] cookies) {

@@ -135,6 +135,11 @@ public class UserModel implements UserDetails {
                 + ", entreprise_id=" + entreprise_id + "]";
     }
 
+    public Object getName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getName'");
+    }
+
 
    
 }

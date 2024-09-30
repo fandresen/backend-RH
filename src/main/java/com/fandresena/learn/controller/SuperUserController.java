@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,27 +35,29 @@ import jakarta.validation.Valid;
 @RequestMapping("/superuser")
 public class SuperUserController {
 
-     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private AuthenticationManager superUserAuthenticationManager;
     private final SuperUserService superUserService;
-     private JWTService jwtService;
+    private JWTService jwtService;
 
     @Autowired
-    public SuperUserController(SuperUserService superUserService,@Qualifier("superUserAuthenticationManager") AuthenticationManager superUserAuthenticationManager,JWTService jwtService) {
+    public SuperUserController(SuperUserService superUserService,
+            @Qualifier("superUserAuthenticationManager") AuthenticationManager superUserAuthenticationManager,
+            JWTService jwtService) {
         this.superUserService = superUserService;
         this.superUserAuthenticationManager = superUserAuthenticationManager;
         this.jwtService = jwtService;
     }
 
     @GetMapping(produces = "application/json")
-    public ResponseEntity<List<SuperUserModel>> getAllSuperUsers(){
+    public ResponseEntity<List<SuperUserModel>> getAllSuperUsers() {
         List<SuperUserModel> superUsers = superUserService.getAllSuperUsers();
         return ResponseEntity.ok(superUsers);
     }
 
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<String> createSuperUser(@Valid @RequestBody SuperUserModel superUserModel){
+    public ResponseEntity<String> createSuperUser(@Valid @RequestBody SuperUserModel superUserModel) {
         try {
             superUserService.createSuperUser(superUserModel);
             return ResponseEntity.ok("Created Successfully");
@@ -62,33 +66,46 @@ public class SuperUserController {
         }
     }
 
-    //Login for Super User
-    @PostMapping(path = "/login",consumes = "application/json")
-    public ResponseEntity<?> loginSuperUser(@RequestBody LoginDTO loginDTO,HttpServletResponse res){
-        
-        logger.info("login super user");
-         final Authentication authenticate = superUserAuthenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
+    // Login for Super User
+    @PostMapping(path = "/login", consumes = "application/json")
+    public ResponseEntity<?> loginSuperUser(@RequestBody LoginDTO loginDTO, HttpServletResponse res) {
+        try {
+            final Authentication authenticate = superUserAuthenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
 
-        if (authenticate.isAuthenticated()) {
-            String accessToken = jwtService.generateAccessToken(authenticate.getName());
-            String refreshToken = jwtService.generateRefreshToken(authenticate.getName());
-            Map<String, String> response = new HashMap<String,String>();
-            response.put("accessToken", accessToken);
-            ResponseCookie jwtCookie = ResponseCookie.from("refreshToken", refreshToken)
-                    .httpOnly(true)
-                    .path("/")
-                    .secure(false)
-                    .maxAge(48 * 60 * 60) 
-                    .sameSite("None") // Pour éviter les attaques CSRF
-                    .build();
+            if (authenticate.isAuthenticated()) {
+                String accessToken = jwtService.generateAccessToken(authenticate.getName());
+                String refreshToken = jwtService.generateRefreshToken(authenticate.getName());
+                Map<String, String> response = new HashMap<String, String>();
+                response.put("accessToken", accessToken);
+                ResponseCookie jwtCookie = ResponseCookie.from("refreshToken", refreshToken)
+                        .httpOnly(true)
+                        .path("/")
+                        .secure(false)
+                        .maxAge(48 * 60 * 60)
+                        .sameSite("None") // Pour éviter les attaques CSRF
+                        .build();
 
-            // Ajoutez le cookie à la réponse HTTP
-            res.addHeader("Set-Cookie", jwtCookie.toString());
+                // Ajoutez le cookie à la réponse HTTP
+                res.addHeader("Set-Cookie", jwtCookie.toString());
 
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body("Authentication failed");
+                return ResponseEntity.ok(response);
+            } else {
+                // Si l'authentification échoue
+                return ResponseEntity.status(401).body("Email or password is incorrect");
+            }
+        } catch (BadCredentialsException e) {
+            //Mot de passe incorrect
+            return ResponseEntity.status(401).body("Password is incorrect");
+        } catch (InternalAuthenticationServiceException e) {
+            //utilisateru n'existe pas
+            return ResponseEntity.status(401).body("User doesn't exist");
         }
+
+        catch (Exception e) {
+            logger.error("Error while authenticating user", e);
+            return ResponseEntity.status(500).body("An error occurred while processing the request");
+        }
+
     }
 }

@@ -29,10 +29,11 @@ public class UserService {
         return userDAO.getUserById(id);
     }
 
-    public void createUser(UserModel userModel) {
+    public UserModel createUser(UserModel userModel) {
         String password = passwordEncoder.encode(userModel.getPassword());
         userModel.setPassword(password);
-        userDAO.createUser(userModel);
+        UserModel userModel1 = userDAO.createUser(userModel);
+        return userModel1;
     }
 
     public void createAdmin(AdminModel adminModel) {

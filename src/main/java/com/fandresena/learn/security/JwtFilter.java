@@ -38,10 +38,18 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         // list of the path we don't want to filter
-        String[] filterList = { "/createPassword","/login","/forgotPassword", "/access-token","/superuser/login"};
+        String[] filterList = { "/createPassword", "/login", "/forgotPassword", "/access-token", "/superuser/login" };
 
         if (List.of(filterList).contains(request.getServletPath())) {
             chain.doFilter(request, response);
+            return;
+        }
+        
+        // Si la méthode est une requête OPTIONS, on ne fait aucune vérification et on
+        // passe au filtre suivant
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            // Autoriser la requête OPTIONS à passer
+            response.setStatus(HttpServletResponse.SC_OK);
             return;
         }
 
@@ -53,26 +61,29 @@ public class JwtFilter extends OncePerRequestFilter {
                 UserModel user = userDAO.findByEmail(accessTokenService.extractUserEmail(token));
                 SuperUserModel superUser = null;
 
-                if(user==null){
+                if (user == null) {
                     superUser = superUserDAO.findByEmail(accessTokenService.extractUserEmail(token));
-                    if(superUser==null) throw new IllegalStateException("SuperUser not found");
+                    if (superUser == null)
+                        throw new IllegalStateException("SuperUser not found");
                 }
 
-                if ((user != null || superUser !=null) && accessTokenService.isTokenValid(token, user!=null?user:superUser)) {
+                if ((user != null || superUser != null)
+                        && accessTokenService.isTokenValid(token, user != null ? user : superUser)) {
                     // if token expired , Throw error 401 error
                     if (accessTokenService.isTokenExpired(token)) {
                         throw new ExpiredJwtException(null, null, token);
                     } else {
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                                //if user is null, pass to superUser
-                                user!=null?user.getEmail():superUser.getEmail(), null,  user!=null?user.getAuthorities():superUser.getAuthorities());
+                                // if user is null, pass to superUser
+                                user != null ? user.getEmail() : superUser.getEmail(), null,
+                                user != null ? user.getAuthorities() : superUser.getAuthorities());
 
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
-                }
-                else throw new IllegalStateException("User not found");
+                } else
+                    throw new IllegalStateException("User not found");
 
             } catch (ExpiredJwtException e) {
                 throw e;

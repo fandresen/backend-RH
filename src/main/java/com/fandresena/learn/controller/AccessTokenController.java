@@ -30,7 +30,7 @@ public class AccessTokenController {
         Cookie[] cookies = request.getCookies();
         logger.info("cookies :",cookies);  
         if (cookies == null || cookies.length == 0) {
-            return ResponseEntity.status(401).body("No cookie found");
+            return ResponseEntity.status(403).body("No cookie found");
         }
         Map<String, String> refeshToken = jwtService.generateAccessTFromRefreshT(cookies);
 

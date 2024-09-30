@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -37,37 +38,36 @@ public class SecurityConfig {
     private AccessDenied accessDenied;
     private LoginSuperUserService loginSuperUserService;
 
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-         httpSecurity
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests((
-                authorize-> authorize
-                                .requestMatchers("/login").permitAll()
-                                .requestMatchers("/access-token").permitAll()
-                                .requestMatchers("/superuser/login").permitAll()
-                                .requestMatchers("/createPassword","/forgotPassword").permitAll()
-                                .requestMatchers("/images/**", "/css/**", "/js/**").permitAll()
-                                .anyRequest().authenticated()
-                              
-            ))
-            .exceptionHandling(exceptionHandling -> exceptionHandling
-            .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-            .accessDeniedHandler(accessDenied)
-        )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests((authorize -> authorize
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/access-token").permitAll()
+                        .requestMatchers("/superuser/login").permitAll()
+                        .requestMatchers("/createPassword", "/forgotPassword").permitAll()
+                        .requestMatchers("/images/**", "/css/**", "/js/**").permitAll()
+                        .anyRequest().authenticated()
 
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                ))
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(accessDenied))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            return httpSecurity.build();
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
     }
 
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedOriginPattern("*"); // Vous pouvez remplacer * par des domaines spécifiques
+        corsConfiguration.addAllowedOriginPattern("http://192.168.1.87:5173"); // Vous pouvez remplacer * par des domaines
+                                                                            // spécifiques
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addAllowedMethod("*");
 
@@ -76,12 +76,11 @@ public class SecurityConfig {
 
         return new CorsFilter(source);
     }
-    
 
     @Bean
     @Primary
     @Qualifier("userAuthenticationManager")
-    public AuthenticationManager userAuthenticationManager(AuthenticationConfiguration authenticationConfiguration){
+    public AuthenticationManager userAuthenticationManager(AuthenticationConfiguration authenticationConfiguration) {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(loginUserService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -90,7 +89,8 @@ public class SecurityConfig {
 
     @Bean
     @Qualifier("superUserAuthenticationManager")
-    public AuthenticationManager superUserAuthenticationManager(AuthenticationConfiguration authenticationConfiguration){
+    public AuthenticationManager superUserAuthenticationManager(
+            AuthenticationConfiguration authenticationConfiguration) {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(loginSuperUserService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -98,7 +98,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

@@ -32,11 +32,13 @@ public class UserDAO {
     @Autowired
     private EntrepriseRepo entrepriseRepository;
 
-    public void createUser(UserModel userModel) {
+    public UserModel createUser(UserModel userModel) {
+        // Vérifie si l'utilisateur existe déjà en fonction de son email
         Users exist_user = userRepository.findByEmail(userModel.getEmail()).orElse(null);
+    
+        // Si l'utilisateur n'existe pas, nous allons le créer
         if (exist_user == null) {
             Users user = new Users();
-            user.setId(userModel.getId());
             user.setFirst_name(userModel.getFirst_name());
             user.setLast_name(userModel.getLast_name());
             user.setEmail(userModel.getEmail());
@@ -47,19 +49,43 @@ public class UserDAO {
             user.setEntreprise(entrepriseRepository.findById(userModel.getEntreprise_id()).orElse(null));
             user.setPicture(userModel.getPicture());
             user.setActive(userModel.isActive());
-            user.setPassword(userModel.getPassword());
+            user.setPassword(userModel.getPassword()); // Il est recommandé de hasher le mot de passe ici
             user.setIn_Conger(userModel.getIsIn_Conger());
-
-            userRepository.save(user);
+    
+            // Enregistrer l'utilisateur dans la base de données
+            Users savedUser = userRepository.save(user);
+    
+            // Créer un UserModel à partir de l'utilisateur sauvegardé
+            UserModel newUserModel = new UserModel();
+            newUserModel.setId(savedUser.getId());
+            newUserModel.setFirst_name(savedUser.getFirst_name());
+            newUserModel.setLast_name(savedUser.getLast_name());
+            newUserModel.setEmail(savedUser.getEmail());
+            newUserModel.setPhone_number(savedUser.getPhone_number());
+            newUserModel.setRole(savedUser.getRole());
+            newUserModel.setAddress(savedUser.getAddress());
+            newUserModel.setDepartement_id(savedUser.getDepartement().getId());
+            newUserModel.setEntreprise_id(savedUser.getEntreprise().getId());
+            newUserModel.setPicture(savedUser.getPicture());
+            newUserModel.setActive(savedUser.isActive());
+            newUserModel.setIn_Conger(savedUser.getIsIn_Conger());
+    
+            // Retourner le UserModel nouvellement créé
+            return newUserModel;
         }
-
+        else {
+            throw new RuntimeException("User already exists");
+        }
     }
+    
 
-    public void createAdmin(AdminModel adminModel) {
+    public AdminModel createAdmin(AdminModel adminModel) {
+        // Vérifier si l'utilisateur existe déjà avec cet email
         Users exist_user = userRepository.findByEmail(adminModel.getEmail()).orElse(null);
+        
         if (exist_user == null) {
+            // Si l'utilisateur n'existe pas, on crée un nouvel utilisateur
             Users user = new Users();
-            user.setId(adminModel.getId());
             user.setFirst_name(adminModel.getFirst_name());
             user.setLast_name(adminModel.getLast_name());
             user.setEmail(adminModel.getEmail());
@@ -71,11 +97,33 @@ public class UserDAO {
             user.setPassword(adminModel.getPassword());
             user.setActive(adminModel.isActive());
             user.setIn_Conger(adminModel.getIsIn_Conger());
-
-            userRepository.save(user);
+    
+            // Enregistrer le nouvel utilisateur dans la base de données
+            Users savedUser = userRepository.save(user);
+           
+    
+            // Créer un nouvel AdminModel avec des setters
+            AdminModel newAdminModel = new AdminModel();
+            newAdminModel.setId(savedUser.getId());
+            newAdminModel.setFirst_name(savedUser.getFirst_name());
+            newAdminModel.setLast_name(savedUser.getLast_name());
+            newAdminModel.setEmail(savedUser.getEmail());
+            newAdminModel.setPhone_number(savedUser.getPhone_number());
+            newAdminModel.setAddress(savedUser.getAddress());
+            newAdminModel.setRole(savedUser.getRole());
+            newAdminModel.setEntreprise_id(savedUser.getEntreprise() != null ? savedUser.getEntreprise().getId() : null); // Extraire l'ID de l'entreprise
+            newAdminModel.setPicture(savedUser.getPicture());
+            newAdminModel.setActive(savedUser.isActive());
+            newAdminModel.setIn_Conger(savedUser.getIsIn_Conger());
+    
+            // Retourner le modèle Admin nouvellement créé
+            return newAdminModel;
+        } else {
+            throw new RuntimeException("Admin already exists");
         }
-
     }
+    
+    
 
 
     public UserModel getUserById(int id) {
@@ -134,6 +182,7 @@ public class UserDAO {
         for (int i = 0; i < users.size(); i++) {
             Users user = users.get(i);
             UserModel userModel = new UserModel();
+            userModel.setId(user.getId());
             userModel.setFirst_name(user.getFirst_name());
             userModel.setLast_name(user.getLast_name());
             userModel.setEmail(user.getEmail());
@@ -181,6 +230,7 @@ public class UserDAO {
         for (int i = 0; i < users.size(); i++) {
             Users user = users.get(i);
             UserModel userModel = new UserModel();
+            userModel.setId(user.getId());
             userModel.setFirst_name(user.getFirst_name());
             userModel.setLast_name(user.getLast_name());
             userModel.setEmail(user.getEmail());

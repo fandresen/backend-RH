@@ -15,5 +15,6 @@ public interface UserRepo extends JpaRepository<Users, Integer> {
     @Query("SELECT u FROM Users u WHERE u.role = :role")
     List<Users> getAllUserByRole(String role);
 
+    @Query("SELECT u FROM Users u WHERE u.email = :email")
     Optional<Users> findByEmail(String email);
 }

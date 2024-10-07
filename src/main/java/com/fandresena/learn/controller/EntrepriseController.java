@@ -22,7 +22,6 @@ import com.fandresena.learn.dao.UserDAO;
 import com.fandresena.learn.model.AdminModel;
 import com.fandresena.learn.model.EntrepriseModel;
 import com.fandresena.learn.service.TokenGeneratorService;
-import com.fandresena.learn.service.UserService;
 import com.fandresena.learn.service.NewPasswordTokenService;
 import com.fandresena.learn.service.SendEmailService;
 

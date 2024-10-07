@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fandresena.learn.service.JWTService;
 // import com.fandresena.learn.service.RefreshTokenservice;
-import com.fandresena.learn.service.UserService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,13 +21,22 @@ public class AccessTokenController {
 
     // RefreshTokenservice refreshTokenService;
     JWTService jwtService;
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(AccessTokenController.class);
 
     @GetMapping(path = "/access-token", produces = "application/json")
     public ResponseEntity<?> getAccessToken(HttpServletRequest request) {
+
         Cookie[] cookies = request.getCookies();
-        logger.info("cookies :",cookies);  
+
+        if (cookies != null) {
+            StringBuilder cookieString = new StringBuilder();
+            for (Cookie cookie : cookies) {
+                cookieString.append(cookie.getName()).append("=").append(cookie.getValue()).append("; ");
+            }
+            logger.info("Cookies: {}", cookieString.toString());
+        }
+
+
         if (cookies == null || cookies.length == 0) {
             return ResponseEntity.status(403).body("No cookie found");
         }

@@ -1,13 +1,15 @@
 package com.fandresena.learn.entity;
 
-import java.time.LocalDate;
+import com.fandresena.learn.DTO.Status;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
+
 
 @Entity
 public class Absence {
@@ -19,12 +21,14 @@ public class Absence {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private Users user;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private String status;
+
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private Status status;
     private String type;
 
     public int getId() {
@@ -43,27 +47,27 @@ public class Absence {
         this.user = user;
     }
 
-    public LocalDate getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

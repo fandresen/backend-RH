@@ -49,7 +49,7 @@ public class JWTService {
 
     public String generateAccessToken(String userName) {
         final Date now = new Date();
-        final Date expirationDate = new Date(now.getTime() + 60 * 1000); // 1 h
+        final Date expirationDate = new Date(now.getTime() + 60 * 60 * 1000); // 1 h
 
         // get user or superUser role
         UserModel user = userDAO.findByEmail(userName);
@@ -198,6 +198,12 @@ public class JWTService {
 
         }
         return Map.of("error", "Invalid refresh token");
+    }
+
+    public int extractUserId(String token) {
+        String email = this.extractUserEmail(token);
+        UserModel user = userDAO.findByEmail(email);
+        return user.getId();
     }
 
 }

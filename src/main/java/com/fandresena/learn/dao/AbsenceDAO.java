@@ -1,9 +1,9 @@
 package com.fandresena.learn.dao;
 
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fandresena.learn.entity.Absence;
@@ -24,16 +24,16 @@ public class AbsenceDAO {
     public void createAbsence (AbsenceModel absenceModel){
         Absence absence = new Absence();
         absence.setUser(userRepo.findById(absenceModel.getUser_id()).orElse(null));
-        absence.setStartDate(absenceModel.getStartDate());
-        absence.setEndDate(absenceModel.getEndDate());
+        absence.setStartDate(absenceModel.getStartDate().toLocalDateTime());
+        absence.setEndDate(absenceModel.getEndDate().toLocalDateTime());
         absence.setStatus(absenceModel.getStatus());
         absence.setType(absenceModel.getType());
 
         absenceRepo.save(absence);
     }
 
-    public List<AbsenceModel> getAbsencebyId(int id){
-        List<Absence> absences = absenceRepo.getAllAbsencesById(id);
+    public List<AbsenceModel> getAbsencebyDepartmentId(int id){
+        List<Absence> absences = absenceRepo.getAllAbsencesByDepId(id);
         List<AbsenceModel> absenceModels = new ArrayList<>();
         for(int i=0; i<absences.size(); i++){
             Absence absence = absences.get(i);
@@ -41,8 +41,8 @@ public class AbsenceDAO {
 
             absenceModel.setId(absence.getId());
             absenceModel.setUser_id(absence.getUser().getId());
-            absenceModel.setStartDate(absence.getStartDate());
-            absenceModel.setEndDate(absence.getEndDate());
+            absenceModel.setStartDate(absence.getStartDate().atOffset(ZoneOffset.UTC));
+            absenceModel.setEndDate(absence.getEndDate().atOffset(ZoneOffset.UTC));
             absenceModel.setStatus(absence.getStatus());
             absenceModel.setType(absence.getType());
 
@@ -51,4 +51,26 @@ public class AbsenceDAO {
 
         return absenceModels;
     }
+
+    public List<AbsenceModel> getAbsencebyUserId(int id){
+        List<Absence> absences = absenceRepo.getAllAbsencesByUserId(id);
+        List<AbsenceModel> absenceModels = new ArrayList<>();
+        for(int i=0; i<absences.size(); i++){
+            Absence absence = absences.get(i);
+            AbsenceModel absenceModel = new AbsenceModel();
+
+            absenceModel.setId(absence.getId());
+            absenceModel.setUser_id(absence.getUser().getId());
+            absenceModel.setStartDate(absence.getStartDate().atOffset(ZoneOffset.UTC));
+            absenceModel.setEndDate(absence.getEndDate().atOffset(ZoneOffset.UTC));
+            absenceModel.setStatus(absence.getStatus());
+            absenceModel.setType(absence.getType());
+
+            absenceModels.add(absenceModel);
+        }
+
+        return absenceModels;
+    }
+
+
 }

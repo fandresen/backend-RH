@@ -1,14 +1,26 @@
 package com.fandresena.learn.model;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
+
+import com.fandresena.learn.DTO.Status;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.validation.constraints.NotNull;
 
 public class AbsenceModel {
 
     private int id;  
     private int user_id;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private String status;
+
+    @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    private OffsetDateTime startDate;
+
+    @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    private  OffsetDateTime endDate;
+    @NotNull
+    private Status status;
     private String type;
 
     public AbsenceModel() {
@@ -30,27 +42,27 @@ public class AbsenceModel {
         this.user_id = user_id;
     }
 
-    public LocalDate getStartDate() {
+    public OffsetDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(OffsetDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public OffsetDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(OffsetDateTime endDate) {
         this.endDate = endDate;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

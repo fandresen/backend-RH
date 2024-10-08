@@ -25,6 +25,11 @@ import com.fandresena.learn.service.LoginSuperUserService;
 import com.fandresena.learn.service.LoginUserService;
 
 import lombok.AllArgsConstructor;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+
 
 @Configuration
 @EnableWebSecurity
@@ -47,7 +52,7 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/access-token").permitAll()
                         .requestMatchers("/superuser/login").permitAll()
-                        .requestMatchers("/createPassword", "/forgotPassword").permitAll()
+                        .requestMatchers("/createPassword", "/forgotPassword","/swagger-ui/ndex.html").permitAll()
                         .requestMatchers("/images/**", "/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated()
 
@@ -103,6 +108,15 @@ public class SecurityConfig {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.OAS_30) // Utilise OAS 3.0
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.exemple.votre.package"))
+                .paths(PathSelectors.any())
+                .build();
     }
 
 }

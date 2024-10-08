@@ -8,5 +8,8 @@ import com.fandresena.learn.entity.Absence;
 
 public interface AbsenceRepo extends JpaRepository<Absence, Integer> {
     @Query("SELECT a FROM Absence a INNER JOIN a.user u WHERE u.departement.id = :id")
-    List<Absence> getAllAbsencesById(int id);
+    List<Absence> getAllAbsencesByDepId(int id);
+
+    @Query("SELECT a FROM Absence a INNER JOIN a.user u WHERE u.id = :id")
+    List<Absence> getAllAbsencesByUserId(int id);
 }

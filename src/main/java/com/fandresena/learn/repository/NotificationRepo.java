@@ -9,7 +9,7 @@ import com.fandresena.learn.entity.Notification;
 
 public interface NotificationRepo extends JpaRepository<Notification,Long>{
 
-    @Query("SELECT n FROM Notification n WHERE n.receipientId = :userId")
+    @Query("SELECT n FROM Notification n WHERE n.receipientId.id = :userId")
     List<Notification> findAllByReceipient_Id(int userId);
 
 }

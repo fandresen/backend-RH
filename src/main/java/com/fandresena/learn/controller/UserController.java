@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fandresena.learn.DTO.UserDTO;
 import com.fandresena.learn.model.UserModel;
 import com.fandresena.learn.service.JWTService;
 import com.fandresena.learn.service.NewPasswordTokenService;
@@ -33,40 +34,30 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     UserService userService;
     JWTService jwtService;
-     private NewPasswordTokenService newPasswordTokenService;
+    NewPasswordTokenService newPasswordTokenService;
 
     @PostMapping(consumes = "application/json")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('DEP_CHEF')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> createUser(@Valid @RequestBody UserModel user, HttpServletRequest res) {
         String token = res.getHeader("Authorization");
         token = token.substring(7);
 
-        try {
-            int entrepriseId = jwtService.extractEntrepriseId(token);
-            user.setEntreprise_id(entrepriseId);
-
-            UserModel userModel = userService.createUser(user);
-            logger.info("create user" + user.getEmail());
-            logger.info("create user ID" + user.getId());
-
-             // Generate newPasswordToken
-            String tokenPassword = TokenGeneratorService.generatepassword(12);
-            String realToken = newPasswordTokenService.createToken(userModel, tokenPassword);
-            String template = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/CreateNewPassword.html")));
-            SendEmailService.sendEmail(user.getEmail(), "Compte ZenRH", user.getFirst_name() , " http://192.168.1.87:5173/newPassword?tkn="+realToken,template);
-
-            return ResponseEntity.ok("User created successfully");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error creating user");
-        }
+        return userService.createEntireuser(user,token);
     }
 
     @GetMapping(path = "/department", produces = "application/json")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('DEP_CHEF')  or hasAuthority('USER')")
-    public ResponseEntity<?> getAllUserByDepartement(@RequestParam("departement") int id) {
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('CHEF_DEP')  or hasAuthority('USER')")
+    public ResponseEntity<?> getAllUserByDepartement(HttpServletRequest res) {
+        String token = res.getHeader("Authorization");
+        token = token.substring(7);
+        int departmentId = jwtService.extractDepartementId(token);
         try {
-            List<UserModel> users = userService.getByDepartementId(id);
-            return ResponseEntity.ok(users);
+            List<UserModel> users = userService.getByDepartementId(departmentId);
+            List<UserDTO> userDTOs = new ArrayList<>();
+            for (UserModel userModel : users) {
+                userDTOs.add(userService.convertToDTO(userModel));
+            }
+            return ResponseEntity.ok(userDTOs);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error retrieving users");
         }
@@ -87,6 +78,17 @@ public class UserController {
             return ResponseEntity.badRequest().body("Error retrieving users ");
         }
 
+    }
+
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<?> getUserById(@RequestParam(name = "id") int id){
+        try {
+            UserModel user = userService.getUserById(id);
+            UserDTO userDTO = userService.convertToDTO(user);
+            return ResponseEntity.ok(userDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error retrieving user");
+        }
     }
 
 }

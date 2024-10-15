@@ -7,9 +7,13 @@ import java.util.Date;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.fandresena.learn.controller.AbsenceController;
 import com.fandresena.learn.dao.AccessTokenDAO;
 import com.fandresena.learn.dao.RefreshTokenDAO;
 import com.fandresena.learn.dao.SuperUserDAO;
@@ -28,6 +32,7 @@ import jakarta.transaction.Transactional;
 @Service
 public class JWTService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AbsenceController.class);
     private AccessTokenDAO accessTokenDAO;
     private RefreshTokenDAO refreshTokenDAO;
     private UserDAO userDAO;
@@ -51,6 +56,9 @@ public class JWTService {
         final Date now = new Date();
         final Date expirationDate = new Date(now.getTime() + 60 * 60 * 1000); // 1 h
 
+        logger.info("NOW :" + now);
+        logger.info("EXPIRATION :" + expirationDate);
+
         // get user or superUser role
         UserModel user = userDAO.findByEmail(userName);
         Map<String, Object> claims = new HashMap<String, Object>();
@@ -58,10 +66,15 @@ public class JWTService {
             claims.put("role", user.getRole());
             claims.put("entreprise_id", user.getEntreprise_id());
             claims.put("userName", user.getLast_name());
+            Integer departementId = user.getDepartement_id();
+            if (departementId != null) {
+                claims.put("departement_id", departementId);
+            }
 
         } else {
             SuperUserModel superUser = superUserDAO.findByEmail(userName);
             claims.put("role", superUser.getAuthorities());
+            claims.put("userName", superUser.getUsername());
         }
 
         String accessToken = Jwts.builder()
@@ -179,6 +192,15 @@ public class JWTService {
                 .get("entreprise_id", Integer.class);
     }
 
+    public int extractDepartementId(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("departement_id", Integer.class);
+    }
+
     public Map<String, String> generateAccessTFromRefreshT(Cookie[] cookies) {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -203,6 +225,10 @@ public class JWTService {
     public int extractUserId(String token) {
         String email = this.extractUserEmail(token);
         UserModel user = userDAO.findByEmail(email);
+        if(user==null){
+            SuperUserModel superUserModel = superUserDAO.findByEmail(email);
+            return superUserModel.getId();
+        }
         return user.getId();
     }
 

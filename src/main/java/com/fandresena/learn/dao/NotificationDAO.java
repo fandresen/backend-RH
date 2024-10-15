@@ -24,6 +24,8 @@ public class NotificationDAO {
         notification.setSender(userRepo.findById(notificationModel.getSenderID()).orElse(null));
         notification.setReceipientId(userRepo.findById(notificationModel.getRecipientId()).orElse(null));
         notification.setSubject(notificationModel.getSubject());
+        notification.setData(notificationModel.getData());
+        notification.setIs_read(false);
 
         notificationRepo.save(notification);
     }
@@ -38,7 +40,10 @@ public class NotificationDAO {
             notificationModel.setSenderID(notification.getSender().getId());
             notificationModel.setRecipientId(notification.getReceipientId().getId());
             notificationModel.setSubject(notification.getSubject());
+            notificationModel.setData(notification.getData());
+            notificationModel.setRead(notification.isIs_read());
             notificationModels.add(notificationModel);
+
         }
         return notificationModels;
     }

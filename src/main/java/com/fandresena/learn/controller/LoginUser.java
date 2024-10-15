@@ -76,7 +76,7 @@ public class LoginUser {
         } catch (InternalAuthenticationServiceException e) {
             // Log l'erreur interne et retourner une réponse 404
             logger.warn("User doesn't exist: {}", e.getMessage());
-            return ResponseEntity.status(404).body("User doesn't exist");
+            return ResponseEntity.status(401).body("User doesn't exist");
         } catch (Exception e) {
             logger.error("Error while authenticating user", e);
             return ResponseEntity.status(500).body("An error occurred while processing the request");

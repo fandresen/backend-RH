@@ -191,7 +191,9 @@ public class UserDAO {
             userModel.setAddress(user.getAddress());
             userModel.setPicture(user.getPicture());
             userModel.setPassword(user.getPassword());
-            userModel.setDepartement_id(user.getDepartement().getId());
+            if(user.getDepartement() != null){
+                userModel.setDepartement_id(user.getDepartement().getId());
+            }
             userModel.setIn_Conger(user.getIsIn_Conger());
             userModel.setActive(user.isActive());
             userModel.setEntreprise_id(user.getEntreprise().getId());

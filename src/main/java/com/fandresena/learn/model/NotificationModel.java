@@ -2,6 +2,7 @@ package com.fandresena.learn.model;
 
 import java.time.LocalDateTime;
 
+
 public class NotificationModel {
 
     private Long id;
@@ -14,8 +15,12 @@ public class NotificationModel {
 
     private String subject;
 
-    public Long getId() {
-        return id;
+    private String data;
+
+    private boolean read;
+
+    public void setRead(boolean read) {
+        this.read = read;
     }
 
     public void setId(Long id) {
@@ -52,5 +57,21 @@ public class NotificationModel {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public boolean isRead() {
+        return read;
     }
 }

@@ -27,6 +27,18 @@ public class Notification {
 
     private String subject;
 
+    private String data;
+
+    private boolean is_read;
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
     public Long getId() {
         return id;
     }
@@ -43,7 +55,6 @@ public class Notification {
         this.sender = sender;
     }
 
-
     public LocalDateTime getNotification_date() {
         return notification_date;
     }
@@ -59,12 +70,21 @@ public class Notification {
     public void setSubject(String subject) {
         this.subject = subject;
     }
+
     public Users getReceipientId() {
         return receipientId;
     }
 
     public void setReceipientId(Users receipientId) {
         this.receipientId = receipientId;
+    }
+
+    public boolean isIs_read() {
+        return is_read;
+    }
+
+    public void setIs_read(boolean read) {
+        this.is_read = read;
     }
 
 }

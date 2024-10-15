@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fandresena.learn.DTO.DepartementDTO;
 import com.fandresena.learn.dao.DepartementDAO;
 import com.fandresena.learn.model.DepartementModel;
 import com.fandresena.learn.service.JWTService;
+import com.fandresena.learn.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,17 +26,20 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RequestMapping("/departement")
 public class DepartementController {
-    private DepartementDAO departementDAO;
-    private JWTService jwtService;
+    DepartementDAO departementDAO;
+    UserService userService;
+    JWTService jwtService;
 
     @PostMapping(consumes = "application/json")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> createDepartment(@Valid @RequestBody DepartementModel departementModel,HttpServletRequest res) {
+    public ResponseEntity<?> createDepartment(@Valid @RequestBody DepartementDTO departementDTO,HttpServletRequest res) {
         String token = res.getHeader("Authorization");
         token = token.substring(7);
         int entrepriseId = jwtService.extractEntrepriseId(token);
+        DepartementModel departementModel = departementDTO.convertToModel();
         departementModel.setEntreprise_id(entrepriseId);
         try {
+            userService.createEntireuser(departementDTO.user(), token);
             departementDAO.createDepartement(departementModel, departementModel.getEntreprise_id());
             return ResponseEntity.ok("Department created successfully");
         } catch (Exception e) {

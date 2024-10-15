@@ -29,7 +29,6 @@ public class UserModel implements UserDetails {
     @NotNull(message = "addresscannot be null")
     private String address;
     private String picture;
-    @NotNull(message = "passwordcannot be null")
     private String password;
     private boolean in_Conger = false;
     private int departement_id;
@@ -135,9 +134,9 @@ public class UserModel implements UserDetails {
                 + ", entreprise_id=" + entreprise_id + "]";
     }
 
-    public Object getName() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getName'");
+    public String getName() {
+        String name = first_name + last_name;
+        return name;
     }
 
 

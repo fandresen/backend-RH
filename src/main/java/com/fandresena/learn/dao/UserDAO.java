@@ -3,8 +3,6 @@ package com.fandresena.learn.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,7 @@ import jakarta.transaction.Transactional;
 
 @Component
 public class UserDAO {
-       private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private UserRepo userRepository;
 
@@ -35,7 +33,7 @@ public class UserDAO {
     public UserModel createUser(UserModel userModel) {
         // Vérifie si l'utilisateur existe déjà en fonction de son email
         Users exist_user = userRepository.findByEmail(userModel.getEmail()).orElse(null);
-    
+
         // Si l'utilisateur n'existe pas, nous allons le créer
         if (exist_user == null) {
             Users user = new Users();
@@ -45,16 +43,19 @@ public class UserDAO {
             user.setPhone_number(userModel.getPhone_number());
             user.setRole(userModel.getRole());
             user.setAddress(userModel.getAddress());
-            user.setDepartement(departementRepository.findById(userModel.getDepartement_id()).orElse(null));
+            if (Integer.valueOf(userModel.getDepartement_id()) != null) {
+                user.setDepartement(departementRepository.findById(userModel.getDepartement_id()).orElse(null));
+            }
+
             user.setEntreprise(entrepriseRepository.findById(userModel.getEntreprise_id()).orElse(null));
             user.setPicture(userModel.getPicture());
             user.setActive(userModel.isActive());
             user.setPassword(userModel.getPassword()); // Il est recommandé de hasher le mot de passe ici
             user.setIn_Conger(userModel.getIsIn_Conger());
-    
+
             // Enregistrer l'utilisateur dans la base de données
             Users savedUser = userRepository.save(user);
-    
+
             // Créer un UserModel à partir de l'utilisateur sauvegardé
             UserModel newUserModel = new UserModel();
             newUserModel.setId(savedUser.getId());
@@ -64,25 +65,25 @@ public class UserDAO {
             newUserModel.setPhone_number(savedUser.getPhone_number());
             newUserModel.setRole(savedUser.getRole());
             newUserModel.setAddress(savedUser.getAddress());
-            newUserModel.setDepartement_id(savedUser.getDepartement().getId());
+            if (newUserModel.getDepartement_id() > 0) {
+                newUserModel.setDepartement_id(savedUser.getDepartement().getId());
+            }
             newUserModel.setEntreprise_id(savedUser.getEntreprise().getId());
             newUserModel.setPicture(savedUser.getPicture());
             newUserModel.setActive(savedUser.isActive());
             newUserModel.setIn_Conger(savedUser.getIsIn_Conger());
-    
+
             // Retourner le UserModel nouvellement créé
             return newUserModel;
-        }
-        else {
+        } else {
             throw new RuntimeException("User already exists");
         }
     }
-    
 
     public AdminModel createAdmin(AdminModel adminModel) {
         // Vérifier si l'utilisateur existe déjà avec cet email
         Users exist_user = userRepository.findByEmail(adminModel.getEmail()).orElse(null);
-        
+
         if (exist_user == null) {
             // Si l'utilisateur n'existe pas, on crée un nouvel utilisateur
             Users user = new Users();
@@ -97,11 +98,10 @@ public class UserDAO {
             user.setPassword(adminModel.getPassword());
             user.setActive(adminModel.isActive());
             user.setIn_Conger(adminModel.getIsIn_Conger());
-    
+
             // Enregistrer le nouvel utilisateur dans la base de données
             Users savedUser = userRepository.save(user);
-           
-    
+
             // Créer un nouvel AdminModel avec des setters
             AdminModel newAdminModel = new AdminModel();
             newAdminModel.setId(savedUser.getId());
@@ -111,20 +111,21 @@ public class UserDAO {
             newAdminModel.setPhone_number(savedUser.getPhone_number());
             newAdminModel.setAddress(savedUser.getAddress());
             newAdminModel.setRole(savedUser.getRole());
-            newAdminModel.setEntreprise_id(savedUser.getEntreprise() != null ? savedUser.getEntreprise().getId() : null); // Extraire l'ID de l'entreprise
+            newAdminModel
+                    .setEntreprise_id(savedUser.getEntreprise() != null ? savedUser.getEntreprise().getId() : null); // Extraire
+                                                                                                                     // l'ID
+                                                                                                                     // de
+                                                                                                                     // l'entreprise
             newAdminModel.setPicture(savedUser.getPicture());
             newAdminModel.setActive(savedUser.isActive());
             newAdminModel.setIn_Conger(savedUser.getIsIn_Conger());
-    
+
             // Retourner le modèle Admin nouvellement créé
             return newAdminModel;
         } else {
             throw new RuntimeException("Admin already exists");
         }
     }
-    
-    
-
 
     public UserModel getUserById(int id) {
         Users user = userRepository.findById(id).orElse(null);
@@ -141,7 +142,7 @@ public class UserDAO {
             userModel.setPassword(user.getPassword());
             userModel.setIn_Conger(user.getIsIn_Conger());
             userModel.setActive(user.isActive());
-            if(user.getDepartement() != null){
+            if (user.getDepartement() != null) {
                 userModel.setDepartement_id(user.getDepartement().getId());
             }
             userModel.setEntreprise_id(user.getEntreprise().getId());
@@ -166,7 +167,7 @@ public class UserDAO {
             model.setPassword(user.getPassword());
             model.setIn_Conger(user.getIsIn_Conger());
             model.setActive(user.isActive());
-            if(user.getDepartement() != null){
+            if (user.getDepartement() != null) {
                 model.setDepartement_id(user.getDepartement().getId());
             }
             model.setEntreprise_id(user.getEntreprise().getId());
@@ -191,7 +192,7 @@ public class UserDAO {
             userModel.setAddress(user.getAddress());
             userModel.setPicture(user.getPicture());
             userModel.setPassword(user.getPassword());
-            if(user.getDepartement() != null){
+            if (user.getDepartement() != null) {
                 userModel.setDepartement_id(user.getDepartement().getId());
             }
             userModel.setIn_Conger(user.getIsIn_Conger());
@@ -215,10 +216,10 @@ public class UserDAO {
             currentUser.setAddress(user.getAddress());
             currentUser.setPicture(user.getPicture());
             currentUser.setPassword(user.getPassword());
-            logger.info("Password : "+ user.getPassword());
+            logger.info("Password : " + user.getPassword());
             currentUser.setIn_Conger(user.getIsIn_Conger());
             currentUser.setActive(user.isActive());
-            if(currentUser.getDepartement()!=null){
+            if (currentUser.getDepartement() != null) {
                 currentUser.setDepartement(departementRepository.findById(user.getDepartement_id()).orElse(null));
             }
             currentUser.setEntreprise(entrepriseRepository.findById(user.getEntreprise_id()).orElse(null));

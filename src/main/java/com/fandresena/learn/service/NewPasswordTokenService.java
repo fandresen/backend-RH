@@ -22,7 +22,6 @@ public class NewPasswordTokenService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public String createToken(UserModel user, String token) {
-        logger.info("User ID here :" + user.getId());
         LocalDateTime expiredDate = LocalDateTime.now().plusMinutes(10);
         try {
             NewPasswordTokenModel newtoken = newPasswordTokenDAO

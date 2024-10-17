@@ -46,7 +46,6 @@ public class SendEmailService {
             message.setContent(body, "text/html; charset=utf-8");
             
             Transport.send(message);
-            System.out.println("Email sent successfully to " + to);
 
         }
         catch(MessagingException e){

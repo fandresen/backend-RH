@@ -20,6 +20,9 @@ public class Departement {
     @ManyToOne
     @JoinColumn(name = "entreprise_id")
     private Entreprise entreprise;
+    @JoinColumn(name = "dep_chef_id")
+    @ManyToOne
+    private Users chef;
     
     public int getId() {
         return id;
@@ -38,5 +41,11 @@ public class Departement {
     }
     public void setEntreprise(Entreprise entreprise) {
         this.entreprise = entreprise;
+    }
+    public Users getChef() {
+        return chef;
+    }
+    public void setChef(Users chef) {
+        this.chef = chef;
     }
 }

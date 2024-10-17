@@ -4,6 +4,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fandresena.learn.enums.UserRole;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
@@ -25,7 +27,7 @@ public class UserModel implements UserDetails {
     @NotNull(message = "phone number cannot be null")
     private String phone_number;
     @NotNull(message = "role cannot be null")
-    private String role;
+    private UserRole role;
     @NotNull(message = "addresscannot be null")
     private String address;
     private String picture;
@@ -40,7 +42,7 @@ public class UserModel implements UserDetails {
      @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         
-        return List.of(new SimpleGrantedAuthority(this.role));
+        return List.of(new SimpleGrantedAuthority(this.role.toString()));
     }
 
     @Override
@@ -77,10 +79,10 @@ public class UserModel implements UserDetails {
     public void setPhone_number(String phone_number) {
         this.phone_number = phone_number;
     }
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
     public String getAddress() {

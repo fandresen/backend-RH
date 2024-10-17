@@ -42,24 +42,27 @@ public class UserService {
         return userModel1;
     }
 
-    public ResponseEntity<?> createEntireuser(UserModel user,String token){
-         try {
+    public UserModel createEntireuser(UserModel user, String token) {
+        try {
             int entrepriseId = jwtService.extractEntrepriseId(token);
             user.setEntreprise_id(entrepriseId);
 
             UserModel userModel = this.createUser(user);
-            logger.info("create user" + user.getEmail());
-            logger.info("create user ID" + user.getId());
+            logger.info("create user" + userModel.getEmail());
+            logger.info("create user ID" + userModel.getId());
 
-             // Generate newPasswordToken
+            // Generate newPasswordToken
             String tokenPassword = TokenGeneratorService.generatepassword(12);
             String realToken = newPasswordTokenService.createToken(userModel, tokenPassword);
-            String template = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/CreateNewPassword.html")));
-            SendEmailService.sendEmail(user.getEmail(), "Compte ZenRH", user.getFirst_name() , " http://192.168.1.87:5173/newPassword?tkn="+realToken,template);
+            String template = new String(
+                    Files.readAllBytes(Paths.get("src/main/resources/templates/CreateNewPassword.html")));
+            SendEmailService.sendEmail(user.getEmail(), "Compte ZenRH", user.getFirst_name(),
+                    " http://192.168.1.87:5173/newPassword?tkn=" + realToken, template);
 
-            return ResponseEntity.ok("User created successfully");
+            return userModel;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error creating user");
+            logger.error("CREATE ENTIRE USER ERROR : " + e.getMessage());
+            return null;
         }
     }
 
@@ -90,7 +93,7 @@ public class UserService {
         }
     }
 
-    public UserDTO convertToDTO(UserModel user){
-        return new UserDTO(user.getId(),user.getFirst_name(), user.getLast_name(), user.getEmail(),user.getPicture());
+    public UserDTO convertToDTO(UserModel user) {
+        return new UserDTO(user.getId(), user.getFirst_name(), user.getLast_name(), user.getEmail(), user.getPicture());
     }
 }

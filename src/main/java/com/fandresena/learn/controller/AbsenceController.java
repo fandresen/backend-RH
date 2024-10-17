@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fandresena.learn.DTO.AbsenceDTO;
-import com.fandresena.learn.DTO.Status;
 import com.fandresena.learn.dao.AbsenceDAO;
 import com.fandresena.learn.dao.UserDAO;
+import com.fandresena.learn.enums.Status;
 import com.fandresena.learn.model.AbsenceModel;
 import com.fandresena.learn.model.UserModel;
 import com.fandresena.learn.service.AbsenceService;

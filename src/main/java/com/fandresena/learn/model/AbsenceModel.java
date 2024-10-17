@@ -2,7 +2,7 @@ package com.fandresena.learn.model;
 
 import java.time.OffsetDateTime;
 
-import com.fandresena.learn.DTO.Status;
+import com.fandresena.learn.enums.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.constraints.NotNull;

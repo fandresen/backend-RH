@@ -1,4 +1,4 @@
-package com.fandresena.learn.DTO;
+package com.fandresena.learn.enums;
 
 public enum Status {
     APPROUVE,

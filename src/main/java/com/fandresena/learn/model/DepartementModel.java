@@ -8,6 +8,7 @@ public class DepartementModel {
     @NotNull(message = "Departement name cannot be null")
     private String name;
     private int entreprise_id;
+    private int chef_id;
 
     public DepartementModel() {
     }
@@ -34,6 +35,14 @@ public class DepartementModel {
 
     public void setEntreprise_id(int entreprise_id) {
         this.entreprise_id = entreprise_id;
+    }
+
+    public int getChef_id() {
+        return chef_id;
+    }
+
+    public void setChef_id(int ched_id) {
+        this.chef_id = ched_id;
     }
 
     @Override

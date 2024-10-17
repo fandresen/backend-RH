@@ -1,5 +1,7 @@
 package com.fandresena.learn.model;
 
+import com.fandresena.learn.enums.UserRole;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -22,7 +24,7 @@ public class AdminModel extends UserModel {
     @NotNull(message = "phone number cannot be null")
     @Size(min = 10, message = "phone number must be from 10")
     private String phone_number;
-    private String role;
+    private UserRole role;
     @NotNull(message = "adress cannot be null")
     @Size(min = 5, message = "adress require 5 characters min")
     private String adress;
@@ -45,7 +47,7 @@ public class AdminModel extends UserModel {
 
     public AdminModel() {
         super();
-        role = "ADMIN";
+        role = UserRole.ADMIN;
     }
 
     public int getId() {
@@ -88,11 +90,11 @@ public class AdminModel extends UserModel {
         this.phone_number = phone_number;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 

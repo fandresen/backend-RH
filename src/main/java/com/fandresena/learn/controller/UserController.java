@@ -26,6 +26,7 @@ import java.util.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import net.bytebuddy.asm.Advice.Return;
 
 @RestController
 @AllArgsConstructor
@@ -42,7 +43,16 @@ public class UserController {
         String token = res.getHeader("Authorization");
         token = token.substring(7);
 
-        return userService.createEntireuser(user,token);
+        try{
+            userService.createEntireuser(user,token);
+            return ResponseEntity.ok("User created successfully");
+        }
+        catch(Exception e){
+            logger.error(e.getLocalizedMessage());
+            return ResponseEntity.badRequest().body("Error creationg user");
+        }
+
+
     }
 
     @GetMapping(path = "/department", produces = "application/json")

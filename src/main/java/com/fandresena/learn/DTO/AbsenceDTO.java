@@ -3,6 +3,7 @@ package com.fandresena.learn.DTO;
 import java.time.OffsetDateTime;
 
 import com.fandresena.learn.dao.UserDAO;
+import com.fandresena.learn.enums.Status;
 import com.fandresena.learn.model.AbsenceModel;
 
 public class AbsenceDTO {

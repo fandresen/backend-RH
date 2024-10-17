@@ -1,6 +1,10 @@
 package com.fandresena.learn.entity;
 
+import com.fandresena.learn.enums.UserRole;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,7 +25,8 @@ public class Users {
     private String last_name;
     private String email;
     private String phone_number;
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
     private String address;
     private String picture;
     private String password;
@@ -76,11 +81,11 @@ public class Users {
         this.phone_number = phone_number;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 

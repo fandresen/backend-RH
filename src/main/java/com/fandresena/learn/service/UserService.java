@@ -57,7 +57,7 @@ public class UserService {
             String template = new String(
                     Files.readAllBytes(Paths.get("src/main/resources/templates/CreateNewPassword.html")));
             SendEmailService.sendEmail(user.getEmail(), "Compte ZenRH", user.getFirst_name(),
-                    " http://192.168.1.87:5173/newPassword?tkn=" + realToken, template);
+                    " http://197.158.88.203:1407/newPassword?tkn=" + realToken, template);
 
             return userModel;
         } catch (Exception e) {

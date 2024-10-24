@@ -1,10 +1,12 @@
 package com.fandresena.learn.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +19,8 @@ public class NewPasswordToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    // @Lob //Mettre TEXT dans la bd
+    @Column(name = "token",columnDefinition = "TEXT")
     private String token;
 
     private LocalDateTime expired_date;

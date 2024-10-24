@@ -1,12 +1,13 @@
 package com.fandresena.learn.entity;
 
-
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,9 @@ public class AccessToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // @Lob // Mettre TEXT dans la bd
+    @Column(name = "token",columnDefinition = "TEXT")
     private String token;
     private LocalDateTime expirDate;
 

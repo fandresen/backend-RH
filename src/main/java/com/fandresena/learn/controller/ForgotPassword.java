@@ -40,7 +40,7 @@ public class ForgotPassword {
             String token = TokenGeneratorService.generatepassword(12);
             String realToken = newPasswordTokenService.createToken(user, token);
             String template = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/ForgetPassword.html")));
-            SendEmailService.sendEmail(user.getEmail(), "Compte ZenRH", user.getFirst_name() , " http://192.168.1.87:5173/newPassword?tkn="+realToken,template);
+            SendEmailService.sendEmail(user.getEmail(), "Compte ZenRH", user.getFirst_name() , " http://197.158.88.203:1407/newPassword?tkn="+realToken,template);
 
             return ResponseEntity.ok("email sent successfully");
         }

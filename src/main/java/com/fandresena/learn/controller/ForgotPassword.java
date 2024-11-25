@@ -21,30 +21,31 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RequestMapping("/forgotPassword")
 public class ForgotPassword {
-    
+
     UserDAO userDAO;
     private NewPasswordTokenService newPasswordTokenService;
 
     private record Email(String email) {
 
     }
-    
-    @PostMapping
-    public ResponseEntity<?> emailExist(@RequestBody Email email)throws IOException {
-        UserModel user = userDAO.findByEmail(email.email());
-        if(user != null){
 
-            //delete old token
+    @PostMapping
+    public ResponseEntity<?> emailExist(@RequestBody Email email) throws IOException {
+        UserModel user = userDAO.findByEmail(email.email());
+        if (user != null) {
+
+            // delete old token
             newPasswordTokenService.deleteTokenByUserId(user.getId());
 
             String token = TokenGeneratorService.generatepassword(12);
             String realToken = newPasswordTokenService.createToken(user, token);
-            String template = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/ForgetPassword.html")));
-            SendEmailService.sendEmail(user.getEmail(), "Compte ZenRH", user.getFirst_name() , " http://197.158.88.203:1407/newPassword?tkn="+realToken,template);
+            String template = new String(
+                    Files.readAllBytes(Paths.get("src/main/resources/templates/ForgetPassword.html")));
+            SendEmailService.sendEmail(user.getEmail(), "Compte ZenRH", user.getFirst_name(),
+                    " http://192.168.1.242:5173/newPassword?tkn=" + realToken, template);
 
             return ResponseEntity.ok("email sent successfully");
-        }
-        else{
+        } else {
             return ResponseEntity.badRequest().body("cannot find user with that email");
         }
     }

@@ -40,8 +40,7 @@ public class LoginUser {
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
         try {
             // Authentification de l'utilisateur
-            final Authentication authenticate = userAuthenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
+            final Authentication authenticate = userAuthenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
 
             // Si l'utilisateur est authentifié, générer les tokens
             if (authenticate.isAuthenticated()) {

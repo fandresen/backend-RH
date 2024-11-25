@@ -46,18 +46,19 @@ class EntrepriseController {
             EntrepriseModel entrepriseModel = entrepriseDAO.creaEntreprise(data.entreprise());
             int entreprise_id = entrepriseModel.getId();
             AdminModel admin = data.admin();
-             // Insert entreprise id in Admin so that admin.entreprise won't be null
-             admin.setEntreprise_id(entreprise_id);
+            // Insert entreprise id in Admin so that admin.entreprise won't be null
+            admin.setEntreprise_id(entreprise_id);
 
-             AdminModel newAdmin = userDAO.createAdmin(data.admin());
+            AdminModel newAdmin = userDAO.createAdmin(data.admin());
 
             // Generate newPasswordToken
             String token = TokenGeneratorService.generatepassword(12);
             String realToken = newPasswordTokenService.createToken(newAdmin, token);
-            String template = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/CreateNewPassword.html")));
-            SendEmailService.sendEmail(admin.getEmail(), "Compte ZenRH", admin.getFirst_name() , " http://197.158.88.203:1407/newPassword?tkn="+realToken,template);
+            String template = new String(
+                    Files.readAllBytes(Paths.get("src/main/resources/templates/CreateNewPassword.html")));
+            SendEmailService.sendEmail(admin.getEmail(), "Compte ZenRH", admin.getFirst_name(),
+                    " http://192.168.1.242:5173/newPassword?tkn=" + realToken, template);
 
-           
             return ResponseEntity.ok("Entreprise created successfully");
 
         } catch (Exception e) {

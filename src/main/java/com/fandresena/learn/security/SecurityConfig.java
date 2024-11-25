@@ -30,7 +30,6 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -52,7 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/access-token").permitAll()
                         .requestMatchers("/superuser/login").permitAll()
-                        .requestMatchers("/createPassword", "/forgotPassword","/swagger-ui/ndex.html").permitAll()
+                        .requestMatchers("/createPassword", "/forgotPassword", "/swagger-ui/ndex.html").permitAll()
                         .requestMatchers("/images/**", "/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated()
 
@@ -71,9 +70,9 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedOriginPattern("http://197.158.88.203:1407"); // Vous pouvez remplacer * par des
-                                                                               // domaines
-                                                                               // spécifiques
+        corsConfiguration.addAllowedOriginPattern("http://192.168.1.249:5173"); // Vous pouvez remplacer * par des
+                                                                                // domaines
+                                                                                // spécifiques
         corsConfiguration.addAllowedHeader("Authorization");
         corsConfiguration.addAllowedHeader("Content-Type");
         corsConfiguration.addAllowedMethod("GET");
